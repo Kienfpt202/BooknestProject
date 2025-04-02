@@ -6,15 +6,15 @@ const Dashboard = () => {
       <h1 className="text-center text-2xl font-semibold text-[#5B3B1D] mb-6">
         Welcome to your dashboard, BookNest
       </h1>
-      
-      <div className="grid grid-cols-4 gap-4 justify-center">
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 justify-center">
         <StatsCard count={472} label="Accounts" />
         <StatsCard count={472} label="Books" />
         <StatsCard count={472} label="Reviews" />
         <StatsCard count={472} label="Discussions" />
       </div>
 
-      <section className="mt-8">
+      <section className="mt-12">
         <FeatureItem title="Add other admins" />
         <FeatureItem title="Add books" />
         <FeatureItem title="Add Clubs" />

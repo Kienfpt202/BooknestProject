@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
-import { uploadToCloudinary } from "lib/upload";
+import { uploadToCloudinary } from "@lib/upload";
 
 export default function UploadForm() {
   const [file, setFile] = useState<File | null>(null);
@@ -33,7 +33,7 @@ export default function UploadForm() {
 
   return (
     <div className="p-4 border rounded-lg shadow-md">
-      <input type="file" onChange={handleFileChange} />
+      <input type="file" onChange={handleFileChange} accept="image/*" />
       {preview && (
         <div className="w-32 h-32 mt-2 relative">
           <Image src={preview} alt="Preview" layout="fill" objectFit="cover" className="rounded-md" />

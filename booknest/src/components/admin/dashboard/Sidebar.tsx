@@ -1,34 +1,36 @@
-import { JSX } from "react";
-import { FaUser, FaBook, FaUsers, FaStar, FaComments, FaHome } from "react-icons/fa";
+import { FaBook, FaUsers, FaStar, FaComments } from "react-icons/fa";
+import { MdDashboard, MdPerson } from 'react-icons/md'; // Import Material Design icons
 
 interface SidebarItemProps {
-  icon: JSX.Element;  // Chỉ định kiểu cho icon là JSX.Element
-  label: string;      // Chỉ định kiểu cho label là string
-  active?: boolean;   // Tham số active là kiểu boolean và có thể không truyền
+  icon: React.ReactNode;
+  label: string;
+  active?: boolean;
 }
 
 const SidebarItem: React.FC<SidebarItemProps> = ({ icon, label, active = false }) => (
   <li
-    className={`flex items-center p-4 ${
-      active ? "bg-[#C49A6C]" : "hover:bg-[#7A5230]"
+    className={`flex items-center p-4 rounded-md transition duration-300 ${
+      active
+        ? "bg-[#C49A6C] text-white font-semibold shadow-md"
+        : "text-white hover:bg-[#7A5230]"
     }`}
   >
-    <span className="mr-2">{icon}</span>
-    {label}
+    <span className="mr-3 text-xl">{icon}</span>
+    <span className="text-lg font-medium">{label}</span>
   </li>
 );
 
 const Sidebar = () => {
   return (
-    <aside className="w-64 bg-[#5B3B1D] text-white h-screen flex flex-col">
-      <div className="p-4 text-center">
-        <img src="/logo.png" alt="BookNest Systems" className="w-20 mx-auto" />
-        <h2 className="mt-2 text-lg font-semibold">BookNest Systems</h2>
+    <aside className="w-64 bg-[#5B3B1D] text-white h-screen flex flex-col fixed left-0 top-0 z-50 overflow-y-auto">
+      <div className="p-6 text-center">
+        <img src="/logo.png" alt="BookNest Systems" className="w-24 mx-auto mb-4" />
+        <h2 className="text-xl font-bold">BookNest Systems</h2>
       </div>
-      <nav className="flex-1">
-        <ul>
-          <SidebarItem icon={<FaHome />} label="Dashboard" active />
-          <SidebarItem icon={<FaUser />} label="Users" />
+      <nav className="flex-1 px-2 py-4">
+        <ul className="space-y-2">
+          <SidebarItem icon={<MdDashboard />} label="Dashboard" active />
+          <SidebarItem icon={<MdPerson />} label="Users" />
           <SidebarItem icon={<FaBook />} label="Books" />
           <SidebarItem icon={<FaUsers />} label="Clubs" />
           <SidebarItem icon={<FaStar />} label="Reviews" />
@@ -38,5 +40,6 @@ const Sidebar = () => {
     </aside>
   );
 };
+
 
 export default Sidebar;
