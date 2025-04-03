@@ -1,52 +1,42 @@
 "use client";
 import Sidebar from "@components/user/dashboard/Sidebar";
 import Navbar from "@components/user/dashboard/Navbar";
-import BookList from "@components/user/dashboard/BookList";
-
-const booksData = [
-  {
-    title: "The Great Gatsby",
-    author: "F. Scott Fitzgerald",
-    cover: "/covers/gatsby.jpg",
-    views: 1200,
-    date: "12 Mar 2025",
-  },
-  {
-    title: "To Kill a Mockingbird",
-    author: "Harper Lee",
-    cover: "/covers/mockingbird.jpg",
-    views: 980,
-    date: "08 Mar 2025",
-  },
-  {
-    title: "1984",
-    author: "George Orwell",
-    cover: "/covers/1984.jpg",
-    views: 1500,
-    date: "01 Mar 2025",
-  },
-];
+import GenreRead from "@components/user/dashboard/GenreRead";
+import ReadingProgress from "@components/user/dashboard/ReadingProgress";
+import FollowersRead from "@components/user/dashboard/FollowersRead";
 
 const Dashboard = () => {
   return (
-    <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
-      <Sidebar />
+    <div className="flex bg-gray-100">
+      {/* Sidebar (Cố định bên trái) */}
+      <div className="w-64 bg-white shadow-md fixed left-0 top-[70px] h-[calc(100vh-70px)]">
+        <Sidebar />
+      </div>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col ml-64">
-        {/* Navbar */}
-        <Navbar />
+      {/* Main content (Dịch phải để tránh Sidebar) */}
+      <div className="flex-1 ml-64">
+        {/* Navbar (Cố định trên cùng) */}
+        <div className="fixed top-0 left-64 w-[calc(100%-16rem)] h-16 bg-white shadow-md flex items-center px-6 z-50">
+          <Navbar />
+        </div>
 
-        <main className="p-8 overflow-y-auto">
-          <h1 className="text-2xl font-bold text-[#8B5E3B] mb-6">
-            Welcome to BookNest Community!
-          </h1>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <BookList title="Latest Books" books={booksData} />
-            <BookList title="Popular Books" books={booksData} />
+        {/* Nội dung chính */}
+        <div className="pt-20 px-6 space-y-6 overflow-auto min-h-screen flex flex-col">
+          {/* Hàng đầu tiên: Genre Read & Reading Progress */}
+          <div className="flex gap-6">
+            <div className="w-2/3">
+              <GenreRead />
+            </div>
+            <div className="w-1/3">
+              <ReadingProgress />
+            </div>
           </div>
-        </main>
+
+          {/* Hàng thứ hai: Followers Read (chiếm toàn bộ chiều rộng) */}
+          <div className="w-full">
+            <FollowersRead />
+          </div>
+        </div>
       </div>
     </div>
   );

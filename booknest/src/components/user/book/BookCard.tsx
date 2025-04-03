@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { FaEye, FaCalendarAlt } from "react-icons/fa";
 
 interface BookCardProps {
@@ -12,9 +13,15 @@ const BookCard = ({ title, author, cover, views, date }: BookCardProps) => {
   return (
     <div className="w-56 bg-[#F5ECE3] rounded-lg shadow-md overflow-hidden transition hover:shadow-lg hover:scale-105">
       {/* Ảnh bìa sách */}
-      <div className="h-40 bg-gray-200 flex items-center justify-center">
+      <div className="h-40 bg-gray-200 flex items-center justify-center relative">
         {cover ? (
-          <img src={cover} alt={title} className="h-full w-full object-cover" />
+          <Image
+            src={cover}
+            alt={title}
+            layout="fill"
+            objectFit="cover"
+            className="rounded-t-lg"
+          />
         ) : (
           <span className="text-gray-500">No Image</span>
         )}

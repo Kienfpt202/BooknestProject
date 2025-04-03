@@ -1,4 +1,4 @@
-
+"use client";
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation"; // Import useRouter để chuyển trang
 import Image from "next/image";
