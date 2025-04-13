@@ -42,7 +42,6 @@ const Review: React.FC<ReviewProps> = ({ author, avatar, content, image }) => {
       <div className="flex justify-between mt-3 text-gray-500">
         <button className="hover:text-red-500 transition">👍 Like</button>
         <button className="hover:text-blue-500 transition">💬 Comment</button>
-        <button className="hover:text-green-500 transition">🔗 Share</button>
       </div>
     </div>
   );

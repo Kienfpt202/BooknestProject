@@ -23,7 +23,7 @@ const PersonalBlog = () => {
         <div className="pt-20 px-6 space-y-6 overflow-auto min-h-screen flex">
           {/* Blog Content */}
           <div className="w-3/4">
-            <h2 className="text-xl font-semibold mb-4">Personal Blog</h2>
+            <h2 className="text-xl font-semibold mb-4">Most viewed/reacted reviews </h2>
             <Review
               author="Hoàng Huy"
               avatar="/avatar1.jpg"

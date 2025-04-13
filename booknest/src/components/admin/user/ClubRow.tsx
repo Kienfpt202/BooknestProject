@@ -15,7 +15,6 @@ const ClubRow: React.FC<ClubRowProps> = ({ name, owner, scope, desc }) => {
       <td className="py-3 px-4">{scope}</td>
       <td className="py-3 px-4">{desc}</td>
       <td className="py-3 px-4 flex gap-2">
-        <button className="bg-blue-500 text-white px-2 py-1 rounded">✏️</button>
         <button className="bg-red-500 text-white px-2 py-1 rounded">🗑️</button>
       </td>
     </tr>

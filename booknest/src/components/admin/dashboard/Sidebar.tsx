@@ -1,24 +1,35 @@
-import { FaBook, FaUsers, FaStar, FaComments } from "react-icons/fa";
-import { MdDashboard, MdPerson } from 'react-icons/md'; // Import Material Design icons
+"use client";
+import { FaBook, FaUsers } from "react-icons/fa";
+import { MdDashboard, MdPerson } from "react-icons/md";
+import Link from "next/link";
+import { usePathname } from "next/navigation"; // Import usePathname từ next/navigation
 
 interface SidebarItemProps {
   icon: React.ReactNode;
   label: string;
-  active?: boolean;
+  href: string;
 }
 
-const SidebarItem: React.FC<SidebarItemProps> = ({ icon, label, active = false }) => (
-  <li
-    className={`flex items-center p-4 rounded-md transition duration-300 ${
-      active
-        ? "bg-[#C49A6C] text-white font-semibold shadow-md"
-        : "text-white hover:bg-[#7A5230]"
-    }`}
-  >
-    <span className="mr-3 text-xl">{icon}</span>
-    <span className="text-lg font-medium">{label}</span>
-  </li>
-);
+const SidebarItem: React.FC<SidebarItemProps> = ({ icon, label, href }) => {
+  const pathname = usePathname(); // Lấy đường dẫn hiện tại
+  const isActive = pathname === href; // So sánh với href để xác định active
+
+  return (
+    <li>
+      <Link
+        href={href}
+        className={`flex items-center p-4 rounded-md transition duration-300 ${
+          isActive
+            ? "bg-[#C49A6C] text-white font-semibold shadow-md"
+            : "text-white hover:bg-[#7A5230]"
+        }`}
+      >
+        <span className="mr-3 text-xl">{icon}</span>
+        <span className="text-lg font-medium">{label}</span>
+      </Link>
+    </li>
+  );
+};
 
 const Sidebar = () => {
   return (
@@ -29,17 +40,14 @@ const Sidebar = () => {
       </div>
       <nav className="flex-1 px-2 py-4">
         <ul className="space-y-2">
-          <SidebarItem icon={<MdDashboard />} label="Dashboard" active />
-          <SidebarItem icon={<MdPerson />} label="Users" />
-          <SidebarItem icon={<FaBook />} label="Books" />
-          <SidebarItem icon={<FaUsers />} label="Clubs" />
-          <SidebarItem icon={<FaStar />} label="Reviews" />
-          <SidebarItem icon={<FaComments />} label="Discussions" />
+          <SidebarItem icon={<MdDashboard />} label="Dashboard" href="/admin" />
+          <SidebarItem icon={<MdPerson />} label="Users" href="/admin/user" />
+          <SidebarItem icon={<FaBook />} label="Books" href="/admin/book" />
+          <SidebarItem icon={<FaUsers />} label="Clubs" href="/admin/club" />
         </ul>
       </nav>
     </aside>
   );
 };
-
 
 export default Sidebar;

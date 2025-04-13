@@ -10,8 +10,7 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 justify-center">
         <StatsCard count={472} label="Accounts" />
         <StatsCard count={472} label="Books" />
-        <StatsCard count={472} label="Reviews" />
-        <StatsCard count={472} label="Discussions" />
+        <StatsCard count={472} label="Clubs" />
       </div>
 
       <section className="mt-12">
