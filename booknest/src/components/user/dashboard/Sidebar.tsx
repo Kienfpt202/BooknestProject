@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FaHome, FaBook, FaUsers, FaUser, FaCog, FaDashcube } from "react-icons/fa"; // Updated icons
+import { FaHome, FaBook, FaUsers, FaUser, FaDashcube } from "react-icons/fa"; // Updated icons
 
 const menuItems = [
   { name: "Dashboard", icon: <FaDashcube />, path: "/user/dashboard" }, // Assuming "/" is the dashboard
@@ -46,16 +46,7 @@ const Sidebar = () => {
           );
         })}
       </ul>
-
-      {/* Setting */}
-      <div className="border-t pt-4">
-        <Link href="/settings">
-          <div className="flex items-center px-4 py-3 rounded-md cursor-pointer text-gray-700 hover:bg-gray-200 transition-all">
-            <FaCog className="text-lg mr-3" />
-            Setting
-          </div>
-        </Link>
-      </div>
+      
     </div>
   );
 };

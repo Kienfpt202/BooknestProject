@@ -4,6 +4,7 @@ type ButtonProps = {
   text: string;
   variant: "primary" | "google";
   className?: string;
+  type?: "button" | "submit" | "reset";
   onClick?: () => void;
 };
 

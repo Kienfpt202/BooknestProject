@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Link from "next/link";
 
 const CreateClub: React.FC = () => {
   const [clubName, setClubName] = useState("Tran Van Tuong");
@@ -26,7 +27,7 @@ const CreateClub: React.FC = () => {
           {/* Description */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              description
+              Description
             </label>
             <input
               type="text"
@@ -39,7 +40,7 @@ const CreateClub: React.FC = () => {
           {/* Scope */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              scope
+              Scope
             </label>
             <div className="relative rounded-md shadow-sm">
               <select
@@ -70,16 +71,18 @@ const CreateClub: React.FC = () => {
 
           {/* Buttons */}
           <div className="flex justify-start gap-2 mt-6">
-            <button
+            <Link
+              href="/user/club"
               className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brown-500"
             >
               Back
-            </button>
-            <button
+            </Link>
+            <Link
+              href="/user/club" // hoặc "/clubs/my-clubs" nếu bạn có trang danh sách riêng
               className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-amber-950 bg-brown-500 hover:bg-brown-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brown-500"
             >
               Done
-            </button>
+            </Link>
           </div>
         </div>
       </div>

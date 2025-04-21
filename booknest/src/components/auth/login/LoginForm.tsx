@@ -1,8 +1,36 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import InputField from "@components/auth/login/InputField";
 import Button from "@components/auth/login/Button";
 import Link from "next/link";
+import { loginUser } from "@lib/auth";
 
 const LoginForm = () => {
+  const [email, setEmail] = useState(""); // email = username ở đây
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError("");
+
+    try {
+      await loginUser(email, password);
+      router.push("/dashboard"); // hoặc trang chính sau khi đăng nhập
+    } catch (err: Error | unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+        console.error("Login error:", err);
+      } else {
+        setError("Có lỗi xảy ra.");
+      }
+    }
+  };
+
   return (
     <div className="flex justify-center items-center flex-grow p-4">
       <div className="w-full max-w-[400px] text-center">
@@ -12,13 +40,29 @@ const LoginForm = () => {
           </h2>
           <p className="text-[#5a3e2b] mb-4">Log into your account now!</p>
 
-          <form className="space-y-4">
-            <InputField label="Enter your name" type="text" name="username" />
+          <form className="space-y-4" onSubmit={handleSubmit}>
+            {error && (
+              <p className="text-red-600 text-sm font-medium">{error}</p>
+            )}
+
+            <InputField
+              label="Enter your email"
+              type="email"
+              name="email"
+              value={email}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setEmail(e.target.value)
+              }
+            />
             <InputField
               label="Enter Password"
               type="password"
               name="password"
               showEyeIcon
+              value={password}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setPassword(e.target.value)
+              }
             />
 
             <p className="text-right text-sm">

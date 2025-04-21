@@ -3,6 +3,7 @@ import BookCard from "./BookCard";
 interface BookListProps {
   title: string;
   books: {
+    bookId: string; // Thêm bookId để xác định đường dẫn tới trang chi tiết
     title: string;
     author: string;
     cover?: string;

@@ -1,5 +1,5 @@
-// components/ClubSection.tsx
 import React from 'react';
+import Link from 'next/link'; // import Link
 import ClubCard from './ClubCard';
 
 interface ClubSectionProps {
@@ -15,9 +15,12 @@ const ClubSection: React.FC<ClubSectionProps> = ({ title, clubs, isMyClub, showC
       <div className="bg-[#F5E9D6] p-4 rounded-t-lg flex justify-between items-center">
         <h2 className="text-2xl font-bold text-[#8B5A2B]">{title}</h2>
         {showCreateButton && (
-          <button className="border border-[#8B5A2B] text-[#8B5A2B] px-4 py-2 rounded-md">
+          <Link
+            href="/user/club/newclub"
+            className="border border-[#8B5A2B] text-[#8B5A2B] px-4 py-2 rounded-md transition duration-300 hover:bg-[#8B5A2B] hover:text-white"
+          >
             + Create new club
-          </button>
+          </Link>
         )}
       </div>
       <div className="flex flex-wrap gap-5 p-4 bg-gray-100 rounded-b-lg">

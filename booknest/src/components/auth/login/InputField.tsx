@@ -2,9 +2,11 @@ import { useState } from "react";
 
 type InputFieldProps = {
   label: string;
-  type: "text" | "password";
+  type: "text" | "password"|"email";
   name: string;
   showEyeIcon?: boolean;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 const InputField = ({ label, type, name, showEyeIcon = false }: InputFieldProps) => {

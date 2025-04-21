@@ -15,7 +15,7 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-// Tránh khởi tạo Firebase nhiều lần (hữu ích trong Next.js)
+// Kiểm tra xem Firebase đã được khởi tạo chưa, nếu chưa thì khởi tạo
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
 // Khởi tạo các dịch vụ Firebase

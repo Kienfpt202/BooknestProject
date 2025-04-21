@@ -1,8 +1,8 @@
 "use client";
 import Sidebar from "@components/user/dashboard/Sidebar";
 import Navbar from "@components/user/dashboard/Navbar";
-import BookList from "@components/user/profile/book-list/BookSection";
-import ProfileHeader from '@components/user/profile/edit-profile/ProfileHeader';
+import BookList from "@components/user/home/follower_profile/book_list/BookSection";
+import ProfileHeader from '@components/user/home/follower_profile/ProfileHeader';
 
 const booksData = [
   {

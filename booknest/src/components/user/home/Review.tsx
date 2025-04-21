@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link"; // Import Link từ Next.js
 
 interface ReviewProps {
   author: string;
@@ -19,7 +20,10 @@ const Review: React.FC<ReviewProps> = ({ author, avatar, content, image }) => {
           height={40}
           className="w-10 h-10 rounded-full object-cover"
         />
-        <h4 className="font-semibold ml-3">{author}</h4>
+        {/* Sử dụng Link trực tiếp mà không cần <a> */}
+        <Link href={`/user/follower_profile`} className="font-semibold ml-3">
+          {author}
+        </Link>
       </div>
 
       {/* Nội dung bài viết */}
