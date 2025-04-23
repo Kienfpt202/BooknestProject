@@ -1,28 +1,44 @@
 import { useState } from "react";
 
-type InputFieldProps = {
-  label: string;
-  type: "text" | "password"|"email";
-  name: string;
-  showEyeIcon?: boolean;
+interface InputFieldProps {
+  label?: string;
+  type: string;
+  name?: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-};
+  showEyeIcon?: boolean;
+  disabled?: boolean;
+}
 
-const InputField = ({ label, type, name, showEyeIcon = false }: InputFieldProps) => {
+const InputField = ({
+  label,
+  type,
+  name,
+  value,
+  onChange,
+  showEyeIcon = false,
+  disabled = false,
+}: InputFieldProps) => {
   const [isVisible, setIsVisible] = useState(false);
 
   return (
     <div className="mb-4">
-      <label htmlFor={name} className="block text-[#5a3e2b] font-semibold mb-1">
-        {label}
-      </label>
+      {label && (
+        <label htmlFor={name} className="block text-[#5a3e2b] font-semibold mb-1">
+          {label}
+        </label>
+      )}
       <div className="relative">
         <input
           id={name}
           name={name}
           type={showEyeIcon ? (isVisible ? "text" : "password") : type}
-          className="w-full p-2 border border-[#5a3e2b] rounded-md bg-white text-[#5a3e2b] placeholder-[#8b6f47] focus:outline-none focus:ring-2 focus:ring-[#442a1a]"
+          value={value}
+          onChange={onChange}
+          disabled={disabled}
+          className={`w-full p-2 border border-[#5a3e2b] rounded-md bg-white text-[#5a3e2b] placeholder-[#8b6f47] focus:outline-none focus:ring-2 focus:ring-[#442a1a] ${
+            disabled ? "opacity-50 cursor-not-allowed" : ""
+          }`}
           placeholder={label}
           aria-label={label}
         />
@@ -32,6 +48,7 @@ const InputField = ({ label, type, name, showEyeIcon = false }: InputFieldProps)
             className="absolute inset-y-0 right-3 flex items-center text-[#5a3e2b]"
             onClick={() => setIsVisible(!isVisible)}
             aria-label="Toggle password visibility"
+            disabled={disabled}
           >
             {isVisible ? (
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

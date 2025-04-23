@@ -3,6 +3,7 @@ import { ReactNode } from "react";
 interface ButtonProps {
   children: ReactNode;
   type?: "button" | "submit" | "reset";
+  disabled?: boolean;
 }
 
 const Button = ({ children, type = "button" }: ButtonProps) => { 

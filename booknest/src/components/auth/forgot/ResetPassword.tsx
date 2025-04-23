@@ -7,11 +7,11 @@ import Button from "./Button";
 import { confirmResetPassword } from "@lib/auth";
 
 const ResetPasswordForm = () => {
-  const [email, setEmail] = useState(""); // Không cần thiết nhưng giữ lại theo thiết kế
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -19,7 +19,7 @@ const ResetPasswordForm = () => {
 
   useEffect(() => {
     if (!oobCode) {
-      setError("Link reset password không hợp lệ hoặc đã hết hạn.");
+      setError("Link đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.");
     }
   }, [oobCode]);
 
@@ -38,16 +38,24 @@ const ResetPasswordForm = () => {
       return;
     }
 
+    if (password.length < 6) {
+      setError("Mật khẩu phải có ít nhất 6 ký tự.");
+      return;
+    }
+
     try {
+      setIsSubmitting(true);
       await confirmResetPassword(oobCode, password);
-      setSuccess("Đặt lại mật khẩu thành công!");
-      setTimeout(() => router.push("/login"), 3000); // chuyển hướng sau 3 giây
+      setSuccess("Đặt lại mật khẩu thành công! Đang chuyển hướng...");
+      setTimeout(() => router.push("/login"), 3000);
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message || "Có lỗi xảy ra. Vui lòng thử lại.");
       } else {
         setError("Có lỗi xảy ra. Vui lòng thử lại.");
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -59,28 +67,26 @@ const ResetPasswordForm = () => {
       {error && <p className="text-red-600">{error}</p>}
       {success && <p className="text-green-600">{success}</p>}
 
-      <InputField
-        type="email"
-        placeholder="Enter the email"
-        value={email}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-      />
-      <InputField
+    <InputField
         type="password"
         placeholder="Enter new password"
         value={password}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+        onChange={(e) => setPassword(e.target.value)}
         hasToggle
+        disabled={isSubmitting}
       />
       <InputField
         type="password"
         placeholder="Confirm new password"
         value={confirmPassword}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}
+        onChange={(e) => setConfirmPassword(e.target.value)}
         hasToggle
+        disabled={isSubmitting}
       />
 
-      <Button type="submit">Update password</Button>
+      <Button type="submit" disabled={isSubmitting}>
+        {isSubmitting ? "Updating..." : "Update password"}
+      </Button>
     </form>
   );
 };

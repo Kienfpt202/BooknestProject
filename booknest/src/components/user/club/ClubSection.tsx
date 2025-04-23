@@ -1,15 +1,17 @@
 import React from 'react';
-import Link from 'next/link'; // import Link
+import Link from 'next/link';
 import ClubCard from './ClubCard';
 
 interface ClubSectionProps {
   title: string;
-  clubs: { name: string; owner: string; time: string; status?: 'enrolled' | 'not-confirmed' }[];
+  clubs: { clubId: string; name: string; owner: string; description: string; status?: 'enrolled' | 'not-confirmed' }[];
   isMyClub?: boolean;
   showCreateButton?: boolean;
+  onJoin?: (clubId: string) => void; // Add onJoin prop
+  onExit?: (clubId: string) => void; // Add onExit prop
 }
 
-const ClubSection: React.FC<ClubSectionProps> = ({ title, clubs, isMyClub, showCreateButton }) => {
+const ClubSection: React.FC<ClubSectionProps> = ({ title, clubs, isMyClub, showCreateButton, onJoin, onExit }) => {
   return (
     <div className="mb-10">
       <div className="bg-[#F5E9D6] p-4 rounded-t-lg flex justify-between items-center">
@@ -24,14 +26,17 @@ const ClubSection: React.FC<ClubSectionProps> = ({ title, clubs, isMyClub, showC
         )}
       </div>
       <div className="flex flex-wrap gap-5 p-4 bg-gray-100 rounded-b-lg">
-        {clubs.map((club, index) => (
+        {clubs.map((club) => (
           <ClubCard
-            key={index}
+            key={club.clubId}
+            clubId={club.clubId}
             name={club.name}
             owner={club.owner}
-            time={club.time}
+            description={club.description}
             status={club.status}
             isMyClub={isMyClub}
+            onJoin={onJoin} // Pass the onJoin function
+            onExit={onExit} // Pass the onExit function
           />
         ))}
       </div>

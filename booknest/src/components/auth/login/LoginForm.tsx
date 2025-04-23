@@ -6,28 +6,43 @@ import InputField from "@components/auth/login/InputField";
 import Button from "@components/auth/login/Button";
 import Link from "next/link";
 import { loginUser } from "@lib/auth";
+import { useUser } from "@context/usercontext"; // ✅ import useUser
 
 const LoginForm = () => {
-  const [email, setEmail] = useState(""); // email = username ở đây
+  const { setUser } = useUser(); // ✅ lấy setUser từ context
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
+    setIsSubmitting(true);
 
     try {
-      await loginUser(email, password);
-      router.push("/dashboard"); // hoặc trang chính sau khi đăng nhập
-    } catch (err: Error | unknown) {
+      const userCredential = await loginUser(email, password);
+
+      // ✅ Cập nhật context
+      setUser({
+        uid: userCredential.uid,
+        email: userCredential.email || "",
+        name: userCredential.displayName || "Unknown User",
+        avatar: userCredential.photoURL || "",
+      });
+
+      router.push("/user/profile");
+    } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
         console.error("Login error:", err);
       } else {
         setError("Có lỗi xảy ra.");
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -50,9 +65,8 @@ const LoginForm = () => {
               type="email"
               name="email"
               value={email}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setEmail(e.target.value)
-              }
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={isSubmitting}
             />
             <InputField
               label="Enter Password"
@@ -60,9 +74,8 @@ const LoginForm = () => {
               name="password"
               showEyeIcon
               value={password}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setPassword(e.target.value)
-              }
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={isSubmitting}
             />
 
             <p className="text-right text-sm">
@@ -74,8 +87,19 @@ const LoginForm = () => {
               </Link>
             </p>
 
-            <Button text="Sign in with Google" variant="google" />
-            <Button text="Login" variant="primary" type="submit" />
+            <Button
+              text="Sign in with Google"
+              variant="google"
+              type="button"
+              disabled={isSubmitting}
+              onClick={() => alert("Chưa tích hợp Google Auth 😅")}
+            />
+            <Button
+              text={isSubmitting ? "Logging in..." : "Login"}
+              variant="primary"
+              type="submit"
+              disabled={isSubmitting}
+            />
 
             <p className="text-center text-sm text-[#5a3e2b] mt-4">
               First time with BookNest?{" "}
