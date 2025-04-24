@@ -20,7 +20,7 @@ const Button = ({
   const baseStyle =
     "w-full py-2 px-4 rounded-lg font-bold transition-all duration-300 flex items-center justify-center";
 
-  const styles: Record<ButtonProps["variant"], string> = {
+  const styles: Record<NonNullable<ButtonProps["variant"]>, string> = {
     primary: "bg-[#442a1a] text-white hover:bg-[#5a3e2b]",
     google: "bg-white text-[#442a1a] border border-[#5a3e2b] hover:bg-[#f5e1c0] gap-2",
   };

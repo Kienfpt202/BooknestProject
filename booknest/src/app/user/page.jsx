@@ -39,7 +39,6 @@ const PersonalBlog = () => {
 
           {/* Tutor List (Chiếm 1/4 màn hình) */}
           <div className="w-1/4 p-4 bg-white shadow-md rounded-lg">
-            <h2 className="text-xl font-semibold mb-4">Top Tutors</h2>
             <FollowerList />
           </div>
         </div>

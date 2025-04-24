@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import Input from "./Input";
 import Button from "./Button";
 import Link from "next/link";
+import { db } from "@lib/firebase";
+import { collection, getDocs, setDoc, doc } from "firebase/firestore";
 import { registerUser } from "@lib/auth";
 import { FirebaseError } from "firebase/app";
 
@@ -26,35 +28,61 @@ const RegisterForm = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
-
+  
     const trimmedEmail = email.trim();
-
+  
     if (!isValidEmail(trimmedEmail)) {
       setError("Email không hợp lệ.");
       return;
     }
-
+  
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
       return;
     }
-
-    setIsSubmitting(true); // 🆕
-
+  
+    setIsSubmitting(true);
+  
     try {
-      await registerUser(trimmedEmail, password, username);
-      router.push("/auth/login"); // Redirect to the login after successful registration
+      // Tạo tài khoản
+      const user = await registerUser(trimmedEmail, password, username);
+      if (user) {
+        router.push("/auth/login");
+      } else {
+        setError("Đăng ký không thành công. Vui lòng thử lại.");
+      }
+  
+      // Kiểm tra xem đã có user nào chưa
+      const usersSnapshot = await getDocs(collection(db, "users"));
+      const isFirstUser = usersSnapshot.empty;
+  
+      // Gán role
+      const role = isFirstUser ? "admin" : "user";
+  
+      // Tạo document trong Firestore
+      await setDoc(doc(db, "users", user.uid), {
+        displayName: username,
+        email: trimmedEmail,
+        avatarUrl: "", // có thể cập nhật sau
+        role: role,
+      });
+  
+      router.push("/auth/login");
     } catch (err) {
       const error = err as FirebaseError;
       if (error.code === "auth/email-already-in-use") {
         setError("Email đã được sử dụng.");
+      } else if (error.code === "auth/invalid-email") {
+        setError("Email không hợp lệ.");
+      } else if (error.code === "auth/weak-password") {
+        setError("Mật khẩu quá yếu. Vui lòng nhập mật khẩu mạnh hơn.");
       } else {
-        setError(error.message || "Registration failed. Please try again.");
+        setError(error.message || "Đăng ký thất bại. Vui lòng thử lại.");
       }
     } finally {
-      setIsSubmitting(false); // 🆕
+      setIsSubmitting(false);
     }
-  };
+  };  
 
   return (
     <div className="text-center w-full">

@@ -1,89 +1,103 @@
+"use client";
 import React, { useState } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@context/usercontext"; // Giả sử bạn có context user
+import { createClub } from "@lib/firestore"; // Import hàm createClub từ firestore
 
 const CreateClub: React.FC = () => {
   const [clubName, setClubName] = useState("Tran Van Tuong");
   const [description, setDescription] = useState("bla bla bla");
   const [scope, setScope] = useState("Private");
+  const [loading, setLoading] = useState(false); // Thêm state loading
+  const [error, setError] = useState<string | null>(null); // Thêm state error để hiển thị thông báo lỗi
+
+  const router = useRouter();
+  const { currentUser } = useAuth(); // Lấy uid từ context
+
+  const handleCreateClub = async () => {
+    if (!currentUser) return;
+
+    // Validation đơn giản
+    if (!clubName.trim() || !description.trim()) {
+      setError("Please fill out all fields");
+      return;
+    }
+
+    setLoading(true);
+    setError(null); // Reset lỗi khi bắt đầu tạo câu lạc bộ
+
+    try {
+      // Gọi hàm createClub để tạo câu lạc bộ
+      const clubId = await createClub(clubName, description, scope === "Private", currentUser.uid);
+
+      // Điều hướng đến trang discussion, truyền kèm clubId
+      router.push(`/user/club/discussion?clubId=${clubId}`);
+    } catch (error) {
+      console.error("Error creating club:", error);
+      setError("Failed to create the club. Please try again."); // Hiển thị thông báo lỗi
+    } finally {
+      setLoading(false); // Reset trạng thái loading sau khi hoàn thành
+    }
+  };
 
   return (
     <div className="flex flex-col items-start p-6">
       <h2 className="text-xl font-semibold text-gray-700 mb-6">Create club</h2>
-      <div className="bg-white rounded-md shadow p-6 w-full max-w-md">
-        <div className="space-y-4">
-          {/* Club Name */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Club name
-            </label>
-            <input
-              type="text"
-              value={clubName}
-              onChange={(e) => setClubName(e.target.value)}
-              className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-brown-500 focus:border-brown-500 sm:text-sm"
-            />
-          </div>
+      <div className="bg-white rounded-md shadow p-6 w-full max-w-md space-y-4">
 
-          {/* Description */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Description
-            </label>
-            <input
-              type="text"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-brown-500 focus:border-brown-500 sm:text-sm"
-            />
-          </div>
+        {/* Club Name */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Club name</label>
+          <input
+            type="text"
+            value={clubName}
+            onChange={(e) => setClubName(e.target.value)}
+            className="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm"
+          />
+        </div>
 
-          {/* Scope */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Scope
-            </label>
-            <div className="relative rounded-md shadow-sm">
-              <select
-                value={scope}
-                onChange={(e) => setScope(e.target.value)}
-                className="appearance-none block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-brown-500 focus:border-brown-500 sm:text-sm"
-              >
-                <option value="Private">Private</option>
-                <option value="Public">Public</option>
-              </select>
-              <div className="absolute inset-y-0 right-0 flex items-center pointer-events-none">
-                <svg
-                  className="h-5 w-5 text-gray-400"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  aria-hidden="true"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
+        {/* Description */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+          <input
+            type="text"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm"
+          />
+        </div>
 
-          {/* Buttons */}
-          <div className="flex justify-start gap-2 mt-6">
-            <Link
-              href="/user/club"
-              className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brown-500"
-            >
-              Back
-            </Link>
-            <Link
-              href="/user/club" // hoặc "/clubs/my-clubs" nếu bạn có trang danh sách riêng
-              className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-amber-950 bg-brown-500 hover:bg-brown-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brown-500"
-            >
-              Done
-            </Link>
-          </div>
+        {/* Scope */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Scope</label>
+          <select
+            value={scope}
+            onChange={(e) => setScope(e.target.value)}
+            className="block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm"
+          >
+            <option value="Private">Private</option>
+            <option value="Public">Public</option>
+          </select>
+        </div>
+
+        {/* Error Message */}
+        {error && <p className="text-red-500 text-sm">{error}</p>}
+
+        {/* Buttons */}
+        <div className="flex justify-start gap-2 mt-6">
+          <button
+            onClick={() => router.push("/user/club")}
+            className="px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50"
+          >
+            Back
+          </button>
+          <button
+            onClick={handleCreateClub}
+            disabled={loading} // Vô hiệu hóa nút khi đang tạo câu lạc bộ
+            className="px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-amber-950 hover:bg-amber-900 disabled:bg-gray-400"
+          >
+            {loading ? "Creating..." : "Done"}
+          </button>
         </div>
       </div>
     </div>

@@ -2,9 +2,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
+import { useAuth } from "@context/usercontext";
 
 export default function ProfileHeader() {
   const pathname = usePathname();
+  const { currentUser } = useAuth();
+
+  const displayName = currentUser?.name || "Unknown User";
+  const avatarUrl = currentUser?.avatar || "/avatar.png";
 
   return (
     <div className="relative bg-gradient-to-r from-[#f2e3cd] to-[#e0c197] rounded-b-3xl shadow-lg p-8 text-[#5a3b2e]">
@@ -12,7 +17,7 @@ export default function ProfileHeader() {
       <div className="absolute left-1/2 -top-10 transform -translate-x-1/2">
         <div className="w-20 h-20 rounded-full border-4 border-white shadow-md overflow-hidden relative">
           <Image
-            src="/avatar.png"
+            src={avatarUrl}
             alt="User Avatar"
             fill
             sizes="80px"
@@ -24,7 +29,7 @@ export default function ProfileHeader() {
 
       {/* Name & Followers */}
       <div className="flex flex-col items-center pt-12 space-y-2">
-        <h2 className="text-2xl font-semibold font-serif">Nguyen Chi Kien</h2>
+        <h2 className="text-2xl font-semibold font-serif">{displayName}</h2>
         <div className="flex gap-16 pt-2 text-sm font-medium">
           <p>
             Followers: <span className="font-bold">5</span>
@@ -44,7 +49,7 @@ export default function ProfileHeader() {
             <button
               className={`px-4 py-2 rounded-lg shadow transition-all 
                 ${
-                  pathname === "/profile/book_list"
+                  pathname === "/user/profile/book_list"
                     ? "bg-[#5a3b2e] text-white"
                     : "bg-[#d6b28c] hover:bg-[#e4c5a3] text-[#5a3b2e]"
                 }`}
@@ -57,11 +62,11 @@ export default function ProfileHeader() {
         {/* Review list */}
         <div>
           <p className="mb-2">Your book reviews:</p>
-          <Link href="/user/profile/">
+          <Link href="/user/profile">
             <button
               className={`px-4 py-2 rounded-lg shadow transition-all 
                 ${
-                  pathname === "/profile/review"
+                  pathname === "/user/profile/review"
                     ? "bg-[#5a3b2e] text-white"
                     : "bg-[#d6b28c] hover:bg-[#e4c5a3] text-[#5a3b2e]"
                 }`}
@@ -78,7 +83,7 @@ export default function ProfileHeader() {
             <button
               className={`px-4 py-2 rounded-lg shadow transition-all 
                 ${
-                  pathname === "/profile/modify"
+                  pathname === "/user/profile/modify"
                     ? "bg-[#5a3b2e] text-white"
                     : "bg-[#d6b28c] hover:bg-[#e4c5a3] text-[#5a3b2e]"
                 }`}

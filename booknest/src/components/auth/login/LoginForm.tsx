@@ -1,40 +1,77 @@
 "use client";
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import InputField from "@components/auth/login/InputField";
 import Button from "@components/auth/login/Button";
 import Link from "next/link";
 import { loginUser } from "@lib/auth";
-import { useUser } from "@context/usercontext"; // ✅ import useUser
+import { useAuth } from "@context/usercontext";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@lib/firebase";
 
 const LoginForm = () => {
-  const { setUser } = useUser(); // ✅ lấy setUser từ context
+  const { setCurrentUser } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const router = useRouter();
+
+  useEffect(() => {
+    const userStr = localStorage.getItem("booknest-user");
+    if (userStr) {
+      const pendingPath = localStorage.getItem("booknest-pending-path");
+      if (pendingPath) {
+        localStorage.removeItem("booknest-pending-path");
+        router.push(pendingPath);
+      } else {
+        router.push("/user/profile");
+      }
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     setIsSubmitting(true);
-
+  
     try {
       const userCredential = await loginUser(email, password);
-
-      // ✅ Cập nhật context
-      setUser({
-        uid: userCredential.uid,
-        email: userCredential.email || "",
-        name: userCredential.displayName || "Unknown User",
-        avatar: userCredential.photoURL || "",
-      });
-
-      router.push("/user/profile");
-    } catch (err: unknown) {
+      const user = userCredential;
+  
+      const userDocRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userDocRef);
+  
+      if (!userSnap.exists()) {
+        throw new Error("Tài khoản chưa được thiết lập quyền truy cập.");
+      }
+  
+      const docData = userSnap.data();
+  
+      const userData = {
+        uid: user.uid,
+        email: user.email ?? "",
+        name: docData.displayName || user.displayName || "Unknown User",
+        avatar: docData.avatarUrl || user.photoURL || "",
+        role: docData.role,
+      };
+  
+      if (!userData.role) {
+        throw new Error("Không xác định được vai trò người dùng.");
+      }
+  
+      setCurrentUser(userData);
+  
+      const pendingPath = localStorage.getItem("booknest-pending-path");
+      if (pendingPath) {
+        localStorage.removeItem("booknest-pending-path");
+        router.push(pendingPath);
+      } else if (userData.role === "admin") {
+        router.push("/admin");
+      } else {
+        router.push("/user/profile");
+      }
+    } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
         console.error("Login error:", err);

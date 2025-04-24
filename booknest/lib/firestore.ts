@@ -206,6 +206,25 @@ import {
   };
   
   /* ========== BOOK CLUB MEMBERS ========== */
+  /* ========== BOOK CLUB ========== */
+
+// Thêm hàm tạo câu lạc bộ
+export const createClub = async (
+  clubName: string,
+  description: string,
+  isPrivate: boolean,
+  ownerId: string
+) => {
+  const docRef = await addDoc(collection(db, "book_club"), {
+    name: clubName,
+    description,
+    is_private: isPrivate,
+    owner_id: ownerId,
+    created_at: serverTimestamp(),
+  });
+  return docRef.id; // Trả về ID của câu lạc bộ mới tạo
+};
+
   
   export const joinBookClub = async (clubId: string, userId: string, role = "Member") => {
     const memberRef = doc(db, "bookClub_members", `${clubId}_${userId}`);

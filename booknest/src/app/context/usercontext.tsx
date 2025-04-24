@@ -1,4 +1,3 @@
-// context/UserContext.tsx
 "use client";
 
 import {
@@ -10,15 +9,17 @@ import {
 } from "react";
 
 export type User = {
-    uid: string; 
-  name: string;
+  uid: string;
   email: string;
+  name: string;
   avatar: string;
+  displayName?: string;
 };
 
 type UserContextType = {
-  user: User | null;
-  setUser: (user: User | null) => void;
+  isAuthenticated: boolean;
+  currentUser: User | null;
+  setCurrentUser: (user: User | null) => void;
   logout: () => void;
   loading: boolean;
 };
@@ -26,24 +27,23 @@ type UserContextType = {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUserState] = useState<User | null>(null);
+  const [currentUser, setUserState] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const isAuthenticated = !!currentUser;
 
-  // Đọc user từ localStorage khi app load
   useEffect(() => {
     const storedUser = localStorage.getItem("booknest-user");
     if (storedUser) {
       try {
         setUserState(JSON.parse(storedUser));
       } catch (err) {
-        console.error("Error parsing user from localStorage:", err);
+        console.error("Failed to parse user from localStorage", err);
       }
     }
     setLoading(false);
   }, []);
 
-  // Cập nhật user và lưu vào localStorage
-  const setUser = (user: User | null) => {
+  const setCurrentUser = (user: User | null) => {
     if (user) {
       localStorage.setItem("booknest-user", JSON.stringify(user));
     } else {
@@ -53,20 +53,24 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = () => {
-    setUser(null);
+    localStorage.removeItem("booknest-user");
+    localStorage.removeItem("booknest-pending-path"); // 👈 Xóa luôn pending path
+    setUserState(null);
   };
 
   return (
-    <UserContext.Provider value={{ user, setUser, logout, loading }}>
+    <UserContext.Provider
+      value={{ currentUser, setCurrentUser, logout, loading, isAuthenticated }}
+    >
       {children}
     </UserContext.Provider>
   );
 };
 
-export const useUser = () => {
+export const useAuth = () => {
   const context = useContext(UserContext);
   if (!context) {
-    throw new Error("useUser must be used within a UserProvider");
+    throw new Error("useAuth must be used within a UserProvider");
   }
   return context;
 };

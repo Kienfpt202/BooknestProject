@@ -25,23 +25,26 @@ export const registerUser = async (
   displayName: string
 ) => {
   try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-
-    // Cập nhật displayName trong Firebase Auth
-    await updateProfile(userCredential.user, { displayName });
-
-    // Xác định vai trò (admin nếu đây là tài khoản đầu tiên, còn lại là user)
+    // ✅ Xác định vai trò TRƯỚC khi tạo tài khoản
     const role = await getUserRole();
 
-    // Tạo user profile trong Firestore với vai trò xác định
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    if (!user) {
+      throw new Error("User not found after registration.");
+    }
+
+    await updateProfile(user, { displayName });
+
     await createUserProfileInFirestore(
-      userCredential.user.uid,
+      user.uid,
       email,
       displayName,
       role
     );
 
-    return userCredential.user;
+    return user;
   } catch (error) {
     console.error("Sign up error:", error);
     throw error;
@@ -132,7 +135,7 @@ export const getUserRole = async (): Promise<string> => {
   try {
     const usersSnapshot = await getDocs(collection(db, "users"));
     const users = usersSnapshot.docs;
-    // Nếu chưa có người dùng nào, tài khoản đầu tiên sẽ là admin
+    console.log("Số tài khoản hiện tại:", users.length);
     return users.length === 0 ? "admin" : "user";
   } catch (error) {
     console.error("Error fetching users:", error);

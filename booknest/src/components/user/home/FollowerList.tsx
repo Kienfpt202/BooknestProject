@@ -10,7 +10,7 @@ const FollowerList = () => {
   return (
     <div className="bg-white shadow-md p-4 rounded-md w-60">
       {/* Tiêu đề */}
-      <h3 className="font-semibold text-gray-700 mb-3">followers Active</h3>
+      <h3 className="font-semibold text-gray-700 mb-3"> Active followers </h3>
 
       {/* Danh sách follower */}
       <ul>

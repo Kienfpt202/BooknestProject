@@ -3,10 +3,9 @@ import { useState } from "react";
 import Image from "next/image";
 import { uploadToCloudinary } from "@lib/upload";
 
-export default function UploadForm() {
+export default function UploadForm({ onUploadSuccess }: { onUploadSuccess: (url: string) => void }) {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>("");
-  const [imageUrl, setImageUrl] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,7 +21,7 @@ export default function UploadForm() {
     setLoading(true);
     try {
       const url = await uploadToCloudinary(file);
-      setImageUrl(url);
+      onUploadSuccess(url); // ✅ gửi URL về parent
     } catch (error) {
       console.error("Upload error:", error);
       alert("Upload thất bại! Vui lòng thử lại.");
@@ -32,21 +31,20 @@ export default function UploadForm() {
   };
 
   return (
-    <div className="p-4 border rounded-lg shadow-md">
+    <div className="flex flex-col items-center gap-2">
       <input type="file" onChange={handleFileChange} accept="image/*" />
       {preview && (
-        <div className="w-32 h-32 mt-2 relative">
-          <Image src={preview} alt="Preview" layout="fill" objectFit="cover" className="rounded-md" />
+        <div className="w-24 h-24 mt-2 relative">
+          <Image src={preview} alt="Preview" fill className="rounded-full object-cover" />
         </div>
       )}
-      <button 
-        onClick={handleUpload} 
-        className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg"
+      <button
+        onClick={handleUpload}
+        className="px-3 py-1 bg-blue-500 text-white rounded"
         disabled={loading}
       >
-        {loading ? "Đang upload..." : "Upload Ảnh"}
+        {loading ? "Đang upload..." : "Upload Avatar"}
       </button>
-      {imageUrl && <p>URL ảnh: <a href={imageUrl} target="_blank" rel="noopener noreferrer">{imageUrl}</a></p>}
     </div>
   );
 }

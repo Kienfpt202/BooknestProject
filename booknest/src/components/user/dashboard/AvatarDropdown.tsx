@@ -1,14 +1,17 @@
 "use client";
+
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { useUser } from "@context/usercontext";
+import { useAuth } from "@context/usercontext";
+import { auth } from "@lib/firebase";
+import { signOut } from "firebase/auth";
 
 const AvatarDropdown = () => {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
-  const { user, setUser } = useUser();
+  const { currentUser, logout } = useAuth();
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
@@ -22,19 +25,23 @@ const AvatarDropdown = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleLogout = () => {
-    console.log("Đang đăng xuất...");
-    setUser(null);
-    router.push("/auth/login");
+  const handleLogout = async () => {
+    try {
+      await signOut(auth); // 👉 Đăng xuất khỏi Firebase
+      logout();            // 👉 Xóa localStorage & context
+      router.push("/auth/login");
+    } catch (err) {
+      console.error("Logout failed", err);
+    }
   };
 
-  if (!user) return null;
+  if (!currentUser) return null;
 
   return (
     <div className="relative" ref={dropdownRef}>
       <button onClick={toggleDropdown} className="focus:outline-none">
         <Image
-          src={user.avatar}
+          src={currentUser.avatar}
           alt="User Avatar"
           width={40}
           height={40}
@@ -46,15 +53,15 @@ const AvatarDropdown = () => {
         <div className="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-lg p-4 z-50">
           <div className="flex items-center space-x-3 border-b pb-3">
             <Image
-              src={user.avatar}
+              src={currentUser.avatar}
               alt="User Avatar"
               width={48}
               height={48}
               className="rounded-full"
             />
             <div>
-              <h3 className="font-semibold text-gray-900">{user.name}</h3>
-              <p className="text-sm text-green-600">{user.email}</p>
+              <h3 className="font-semibold text-gray-900">{currentUser.name}</h3>
+              <p className="text-sm text-green-600">{currentUser.email}</p>
               <div className="w-full bg-gray-200 h-1 mt-1 rounded-full">
                 <div className="bg-green-500 h-1 rounded-full w-2/3"></div>
               </div>
