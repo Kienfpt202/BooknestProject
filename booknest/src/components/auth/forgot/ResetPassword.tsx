@@ -19,7 +19,7 @@ const ResetPasswordForm = () => {
 
   useEffect(() => {
     if (!oobCode) {
-      setError("Link đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.");
+      setError("The password reset link is invalid or expired.");
     }
   }, [oobCode]);
 
@@ -29,30 +29,30 @@ const ResetPasswordForm = () => {
     setSuccess("");
 
     if (!oobCode) {
-      setError("Thiếu mã xác thực (oobCode).");
+      setError("Missing verification code (oobCode).");
       return;
     }
 
     if (password !== confirmPassword) {
-      setError("Mật khẩu xác nhận không khớp.");
+      setError("Confirmation password does not match.");
       return;
     }
 
     if (password.length < 6) {
-      setError("Mật khẩu phải có ít nhất 6 ký tự.");
+      setError("Password must be at least 6 characters.");
       return;
     }
 
     try {
       setIsSubmitting(true);
       await confirmResetPassword(oobCode, password);
-      setSuccess("Đặt lại mật khẩu thành công! Đang chuyển hướng...");
+      setSuccess("Password reset successful! Redirecting...");
       setTimeout(() => router.push("/login"), 3000);
     } catch (err: unknown) {
       if (err instanceof Error) {
-        setError(err.message || "Có lỗi xảy ra. Vui lòng thử lại.");
+        setError(err.message || "An error occurred. Please try again.");
       } else {
-        setError("Có lỗi xảy ra. Vui lòng thử lại.");
+        setError("An error occurred. Please try again.");
       }
     } finally {
       setIsSubmitting(false);

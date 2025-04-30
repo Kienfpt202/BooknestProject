@@ -41,7 +41,7 @@ export default function ProfileHeader() {
         </div>
       </div>
 
-      {/* Tên + followers */}
+      {/* Name + followers */}
       <div className="flex flex-col items-center pt-12 space-y-2">
         <h2 className="text-2xl font-semibold">Nguyen Chi Kien</h2>
         <div className="flex gap-10 pt-1 text-sm font-medium">
@@ -54,7 +54,6 @@ export default function ProfileHeader() {
         </div>
       </div>
 
-      {/* Các nút điều hướng */}
       <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 text-center items-center gap-6">
         {/* Book review list */}
         <div>

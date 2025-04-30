@@ -17,14 +17,14 @@ export default function UploadForm({ onUploadSuccess }: { onUploadSuccess: (url:
   };
 
   const handleUpload = async () => {
-    if (!file) return alert("Vui lòng chọn một file!");
+    if (!file) return alert("Please select a file!");
     setLoading(true);
     try {
       const url = await uploadToCloudinary(file);
-      onUploadSuccess(url); // ✅ gửi URL về parent
+      onUploadSuccess(url);
     } catch (error) {
       console.error("Upload error:", error);
-      alert("Upload thất bại! Vui lòng thử lại.");
+      alert("Upload failed! Please try again.");
     } finally {
       setLoading(false);
     }
@@ -43,7 +43,7 @@ export default function UploadForm({ onUploadSuccess }: { onUploadSuccess: (url:
         className="px-3 py-1 bg-blue-500 text-white rounded"
         disabled={loading}
       >
-        {loading ? "Đang upload..." : "Upload Avatar"}
+        {loading ? "Uploading..." : "Upload Avatar"}
       </button>
     </div>
   );

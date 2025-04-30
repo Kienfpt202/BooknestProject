@@ -1,8 +1,9 @@
+// lib/firebase.ts
+
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
-import { getAnalytics } from "firebase/analytics";
 
 // Cấu hình Firebase
 const firebaseConfig = {
@@ -15,13 +16,12 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-// Kiểm tra xem Firebase đã được khởi tạo chưa, nếu chưa thì khởi tạo
+// Initialize Firebase app if not already initialized
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
-// Khởi tạo các dịch vụ Firebase
-export const db = getFirestore(app);
-export const auth = getAuth(app);
-export const storage = getStorage(app);
-export const analytics = typeof window !== "undefined" ? getAnalytics(app) : null;
+//Export Firebase services
+export const db = getFirestore(app);       // Firestore for database
+export const auth = getAuth(app);         // Firebase Auth for login
+export const storage = getStorage(app);   // Image storage (Cloudinary can be used in conjunction)
 
 export default app;

@@ -43,7 +43,7 @@ const LoginForm = () => {
       const userSnap = await getDoc(userDocRef);
   
       if (!userSnap.exists()) {
-        throw new Error("Tài khoản chưa được thiết lập quyền truy cập.");
+        throw new Error("Account access has not been set up.");
       }
   
       const docData = userSnap.data();
@@ -57,7 +57,7 @@ const LoginForm = () => {
       };
   
       if (!userData.role) {
-        throw new Error("Không xác định được vai trò người dùng.");
+        throw new Error("User role not determined.");
       }
   
       setCurrentUser(userData);
@@ -76,7 +76,7 @@ const LoginForm = () => {
         setError(err.message);
         console.error("Login error:", err);
       } else {
-        setError("Có lỗi xảy ra.");
+        setError("An error occurred. Please try again.");
       }
     } finally {
       setIsSubmitting(false);

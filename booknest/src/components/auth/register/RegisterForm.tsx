@@ -32,7 +32,7 @@ const RegisterForm = () => {
     const trimmedEmail = email.trim();
   
     if (!isValidEmail(trimmedEmail)) {
-      setError("Email không hợp lệ.");
+      setError("Invalid email.");
       return;
     }
   
@@ -49,7 +49,7 @@ const RegisterForm = () => {
       if (user) {
         router.push("/auth/login");
       } else {
-        setError("Đăng ký không thành công. Vui lòng thử lại.");
+        setError("Registration failed. Please try again.");
       }
   
       // Kiểm tra xem đã có user nào chưa
@@ -63,7 +63,7 @@ const RegisterForm = () => {
       await setDoc(doc(db, "users", user.uid), {
         displayName: username,
         email: trimmedEmail,
-        avatarUrl: "", // có thể cập nhật sau
+        avatarUrl: "",
         role: role,
       });
   
@@ -71,13 +71,13 @@ const RegisterForm = () => {
     } catch (err) {
       const error = err as FirebaseError;
       if (error.code === "auth/email-already-in-use") {
-        setError("Email đã được sử dụng.");
+        setError("Email is already in use.");
       } else if (error.code === "auth/invalid-email") {
-        setError("Email không hợp lệ.");
+        setError("Invalid email.");
       } else if (error.code === "auth/weak-password") {
-        setError("Mật khẩu quá yếu. Vui lòng nhập mật khẩu mạnh hơn.");
+        setError("Password is too weak. Please enter a stronger password.");
       } else {
-        setError(error.message || "Đăng ký thất bại. Vui lòng thử lại.");
+        setError(error.message || "ĐRegistration failed. Please try again.");
       }
     } finally {
       setIsSubmitting(false);
