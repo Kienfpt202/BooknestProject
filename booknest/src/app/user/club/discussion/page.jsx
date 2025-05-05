@@ -1,4 +1,3 @@
-// pages/dashboard.jsx
 "use client";
 
 import { useState } from 'react';
@@ -12,12 +11,12 @@ import NewDiscussionModal from '@components/user/club/discussion/NewDiscussionMo
 export default function Dashboard() {
   const [discussions, setDiscussions] = useState([
     {
-      userName: 'Nguyen Kien',
+      userName: 'Nguyen Chi Kien',
       avatar: '/avatars/nguyen-kien.jpg',
-      content: "My thoughts after reading the book 'How to Win Friends & Influence'",
-      agreeCount: 2,
-      disagreeCount: 2,
-      commentCount: 3,
+      content: "My thoughts after reading the book 'How to Win Friends & Influence People' by Dale Carnegie are as follows...",
+      agreeCount: 25,
+      disagreeCount: 15,
+      commentCount: 0,
     },
   ]);
 
@@ -25,8 +24,8 @@ export default function Dashboard() {
 
   const handleCreateDiscussion = (content) => {
     const newDiscussion = {
-      userName: 'Current User', // Replace with actual user data
-      avatar: '/avatars/current-user.jpg', // Replace with actual user avatar
+      userName: 'Hoang Huy',
+      avatar: '/avatars/hoang-huy.jpg',
       content,
       agreeCount: 0,
       disagreeCount: 0,
@@ -49,69 +48,54 @@ export default function Dashboard() {
           <Navbar />
         </div>
 
-        {/* Main Content Area (Add padding-top to avoid navbar overlap) */}
-        <div className="pt-20 px-6 space-y-6 overflow-auto min-h-screen">
-          <div className="flex space-x-6">
-            {/* Left Section: Recent Discussions and Discussion Thread */}
-            <div className="flex-1">
-              {/* Recent Discussion Section */}
-              <div className="mb-6">
-                <h2 className="text-lg font-semibold text-gray-800 mb-4">Recent discussion:</h2>
-                {discussions.map((discussion, index) => (
-                  <DiscussionCard
-                    key={index}
-                    userName={discussion.userName}
-                    avatar={discussion.avatar}
-                    content={discussion.content}
-                    agreeCount={discussion.agreeCount}
-                    disagreeCount={discussion.disagreeCount}
-                    commentCount={discussion.commentCount}
-                  />
-                ))}
-              </div>
+        {/* Main Content Area */}
+        <div className="pt-20 px-6 space-y-6 overflow-auto min-h-screen flex">
+          {/* Discussions Section */}
+          <div className="w-3/4">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold text-gray-800">Recent discussions</h2>
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="px-4 py-1 bg-gray-800 text-white rounded hover:bg-gray-900"
+              >
+                + New Discussion
+              </button>
+            </div>
 
-              {/* Discussion Thread Section */}
+            {discussions.map((discussion, index) => (
+              <DiscussionCard
+                key={index}
+                userName={discussion.userName}
+                avatar={discussion.avatar}
+                content={discussion.content}
+                agreeCount={discussion.agreeCount}
+                disagreeCount={discussion.disagreeCount}
+                commentCount={discussion.commentCount}
+              />
+            ))}
+
+            {/* Discussion Thread Section */}
+            <div className="mt-6">
               <DiscussionThread
-                userName="Nguyen Kien"
-                content="Which book in the book club do you prefer?"
+                userName="Nguyen Chi Kien"
+                content="Which book will be the next book discussion in the group, there are 3 books to consider. Which book do you prefer?"
               />
             </div>
+          </div>
 
-            {/* Right Sidebar: Active Members */}
-            <div className="w-64">
-              <ActiveMembers />
-            </div>
+          {/* Right Sidebar: Active Members */}
+          <div className="w-1/4 p-4 bg-white shadow-md rounded-lg">
+            <ActiveMembers />
           </div>
         </div>
-
-        {/* Floating Action Button (Plus Icon) */}
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="fixed bottom-6 right-6 w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-blue-600 transition z-50"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 4v16m8-8H4"
-            />
-          </svg>
-        </button>
-
-        {/* New Discussion Modal */}
-        <NewDiscussionModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onSubmit={handleCreateDiscussion}
-        />
       </div>
+
+      {/* New Discussion Modal */}
+      <NewDiscussionModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleCreateDiscussion}
+      />
     </div>
   );
 }

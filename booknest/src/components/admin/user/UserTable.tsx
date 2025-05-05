@@ -32,19 +32,19 @@ const UserTable = () => {
       });
       setUsers(userList);
     } catch (error) {
-      console.error("Lỗi khi lấy dữ liệu người dùng:", error);
+      console.error("Error getting user data:", error);
     }
   };
 
   const handleDelete = async (id: string) => {
-    const confirmed = confirm("Bạn có chắc muốn xoá người dùng này?");
+    const confirmed = confirm("Are you sure you want to delete this user?");
     if (!confirmed) return;
 
     try {
       await deleteDoc(doc(db, "users", id));
       setUsers((prev) => prev.filter((user) => user.id !== id));
     } catch (error) {
-      console.error("Lỗi khi xoá người dùng:", error);
+      console.error("Error while deleting user:", error);
     }
   };
 

@@ -1,7 +1,7 @@
 export const uploadToCloudinary = async (file: File): Promise<string> => {
-  // Kiểm tra xem file có phải là đối tượng File không
+  // Check if the file is a File object
   if (!(file instanceof File)) {
-    throw new Error("File không hợp lệ.");
+    throw new Error("Invalid file.");
   }
 
   const formData = new FormData();
@@ -9,30 +9,30 @@ export const uploadToCloudinary = async (file: File): Promise<string> => {
   formData.append("upload_preset", "booknest_uploads");
 
   try {
-    // Gửi file lên Cloudinary
+    // Send the file to Cloudinary
     const res = await fetch("https://api.cloudinary.com/v1_1/dwdj7ogvo/image/upload", {
       method: "POST",
       body: formData,
     });
 
-    // Kiểm tra xem phản hồi từ Cloudinary có thành công không
+    // Check if the Cloudinary response was successful
     if (!res.ok) {
       const errorData = await res.json();
       throw new Error(errorData.error.message || "Upload failed");
     }
 
-    // Lấy dữ liệu phản hồi từ Cloudinary
+    // Get the response data from Cloudinary
     const data = await res.json();
 
-    // Trả về URL ảnh đã được lưu trữ trên Cloudinary
+    // Return the URL of the image stored on Cloudinary
     return data.secure_url;
   } catch (error) {
-    // Kiểm tra lỗi và cung cấp thông báo chi tiết hơn
+    // Check the error and provide a more detailed message
     console.error("Cloudinary Upload Error:", error);
     if (error instanceof Error) {
-      throw new Error(`Không thể tải lên ảnh: ${error.message}`);
+      throw new Error(`Failed to upload image: ${error.message}`);
     } else {
-      throw new Error("Không thể tải lên ảnh. Vui lòng thử lại.");
+      throw new Error("Failed to upload image. Please try again.");
     }
   }
 };
