@@ -27,8 +27,8 @@ const AvatarDropdown = () => {
 
   const handleLogout = async () => {
     try {
-      await signOut(auth); // 👉 Đăng xuất khỏi Firebase
-      logout();            // 👉 Xóa localStorage & context
+      await signOut(auth); // Đăng xuất khỏi Firebase
+      logout();            // Xóa localStorage & context
       router.push("/auth/login");
     } catch (err) {
       console.error("Logout failed", err);
@@ -37,11 +37,13 @@ const AvatarDropdown = () => {
 
   if (!currentUser) return null;
 
+  const avatarSrc = currentUser.avatar?.trim() || "/avatar.png";
+
   return (
     <div className="relative" ref={dropdownRef}>
       <button onClick={toggleDropdown} className="focus:outline-none">
         <Image
-          src={currentUser.avatar}
+          src={avatarSrc}
           alt="User Avatar"
           width={40}
           height={40}
@@ -53,7 +55,7 @@ const AvatarDropdown = () => {
         <div className="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-lg p-4 z-50">
           <div className="flex items-center space-x-3 border-b pb-3">
             <Image
-              src={currentUser.avatar}
+              src={avatarSrc}
               alt="User Avatar"
               width={48}
               height={48}

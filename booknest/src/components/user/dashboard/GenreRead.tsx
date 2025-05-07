@@ -3,7 +3,6 @@ import React from "react";
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
 
-// Đăng ký các thành phần biểu đồ
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const genres = [
@@ -16,7 +15,6 @@ const genres = [
   { name: "Funny", started: 15, reading: 9, finished: 18 },
 ];
 
-// Dữ liệu cho biểu đồ
 const data = {
   labels: genres.map((genre) => genre.name),
   datasets: [
@@ -38,7 +36,6 @@ const data = {
   ],
 };
 
-// Cấu hình biểu đồ
 const options = {
     responsive: true,
     plugins: {

@@ -3,7 +3,6 @@ import React from "react";
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 
-// Đăng ký biểu đồ dạng Doughnut
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const progress = {
@@ -12,7 +11,6 @@ const progress = {
   finished: 35,
 };
 
-// Dữ liệu cho biểu đồ Doughnut
 const data = {
   labels: ["Begin", "Reading", "Finished"],
   datasets: [
@@ -24,7 +22,6 @@ const data = {
   ],
 };
 
-// Cấu hình biểu đồ
 const options = {
     responsive: true,
     plugins: {

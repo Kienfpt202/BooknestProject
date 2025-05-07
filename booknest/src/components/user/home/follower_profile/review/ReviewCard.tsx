@@ -25,12 +25,10 @@ export default function ReviewCard({ name, avatar, time, content, likes, comment
         <button className="text-gray-400 hover:text-red-400 font-bold text-xl leading-none">×</button>
       </div>
 
-      {/* Nội dung review */}
       <p className="text-sm text-gray-700 leading-relaxed">
         {content} <button className="text-[#5b3b1c] hover:underline">...More</button>
       </p>
 
-      {/* Ảnh minh họa */}
       <div className="h-40 bg-gray-200 rounded-md border border-dashed border-gray-300" />
 
       {/* Like + Comment */}

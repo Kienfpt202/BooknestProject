@@ -3,7 +3,7 @@ import React from "react";
 interface ButtonProps {
   text: string;
   type?: "submit" | "button" | "reset";
-  variant?: "primary" | "google";
+  variant: "primary" | "google";
   onClick?: () => void;
   className?: string;
   disabled?: boolean;
