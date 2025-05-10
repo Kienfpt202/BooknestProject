@@ -13,9 +13,7 @@ import {
 } from "firebase/firestore";
 import { db } from "./firebase";
 
-// =========================
-// 📚 TYPE DEFINITIONS
-// =========================
+//  TYPE DEFINITIONS
 
 interface UserProfile {
   displayName: string;
@@ -35,7 +33,6 @@ interface Book {
   publisher: string;
   pageCount: number;
 }
-
 
 interface ReadingListItem {
   id: string;
@@ -60,10 +57,7 @@ interface BookClubMember {
   joined_at: Timestamp;
 }
 
-
-// =========================
-// 📚 USERS
-// =========================
+//  USERS
 
 export const createUserProfile = async (uid: string, userData: UserProfile) => {
   await setDoc(doc(db, "users", uid), {
@@ -81,9 +75,7 @@ export const updateUserProfile = async (uid: string, data: Partial<UserProfile>)
   await updateDoc(doc(db, "users", uid), data);
 };
 
-// =========================
-// 📚 BOOKS
-// =========================
+//  BOOKS
 
 export const getAllBooks = async (): Promise<(Book & { id: string })[]> => {
   const snapshot = await getDocs(collection(db, "books"));
@@ -113,9 +105,7 @@ export const addBook = async (bookData: Book): Promise<string> => {
   return docRef.id;
 };
 
-// =========================
-// 📝 COMMENTS
-// =========================
+//  COMMENTS
 
 export const addCommentToReview = async (
   userId: string,
@@ -147,9 +137,7 @@ export const addCommentToDiscussion = async (
   return docRef.id;
 };
 
-// =========================
-// 📚 BOOK CLUB
-// =========================
+//  BOOK CLUB
 
 export const createClub = async (
   clubName: string,
@@ -157,7 +145,7 @@ export const createClub = async (
   isPrivate: boolean,
   ownerId: string
 ): Promise<string> => {
-  const docRef = await addDoc(collection(db, "book_club"), {
+  const docRef = await addDoc(collection(db, "book_clubs"), {
     name: clubName,
     description,
     is_private: isPrivate,
@@ -168,12 +156,12 @@ export const createClub = async (
 };
 
 export const getClubById = async (clubId: string): Promise<(BookClub & { id: string }) | null> => {
-  const docSnap = await getDoc(doc(db, "book_club", clubId));
+  const docSnap = await getDoc(doc(db, "book_clubs", clubId));
   return docSnap.exists() ? { id: docSnap.id, ...docSnap.data() } as BookClub & { id: string } : null;
 };
 
 export const getClubsByUser = async (userId: string): Promise<(BookClub & { id: string })[]> => {
-  const q = query(collection(db, "bookClub_members"), where("user_id", "==", userId));
+  const q = query(collection(db, "book_club_members"), where("user_id", "==", userId));
   const snapshot = await getDocs(q);
 
   const clubIds = snapshot.docs.map((doc) => doc.data().club_id);
@@ -184,7 +172,7 @@ export const getClubsByUser = async (userId: string): Promise<(BookClub & { id: 
 export const getClubMembers = async (
   clubId: string
 ): Promise<BookClubMember[]> => {
-  const q = query(collection(db, "bookClub_members"), where("club_id", "==", clubId));
+  const q = query(collection(db, "book_club_members"), where("club_id", "==", clubId));
   const snapshot = await getDocs(q);
   return snapshot.docs.map((doc) => ({
     id: doc.id,
@@ -192,9 +180,39 @@ export const getClubMembers = async (
   }));
 };
 
-// =========================
-// 📖 DISCUSSION
-// =========================
+export const addMemberToClub = async (
+  clubId: string,
+  userId: string,
+  role: string = "member"
+) => {
+  const memberRef = doc(db, "book_club_members", `${clubId}_${userId}`);
+  await setDoc(memberRef, {
+    club_id: clubId,
+    user_id: userId,
+    role,
+    joined_at: serverTimestamp(),
+  });
+};
+
+export const joinClub = async (clubId: string, userId: string) => {
+  const q = query(
+    collection(db, "book_club_members"),
+    where("club_id", "==", clubId),
+    where("user_id", "==", userId)
+  );
+  const existing = await getDocs(q);
+  if (!existing.empty) return "already-joined";
+
+  await addDoc(collection(db, "book_club_members"), {
+    club_id: clubId,
+    user_id: userId,
+    joined_at: serverTimestamp(),
+    status: "enrolled",
+  });
+  return "success";
+};
+
+//  DISCUSSION
 
 export const addDiscussion = async (
   clubId: string,
@@ -212,9 +230,7 @@ export const addDiscussion = async (
   return docRef.id;
 };
 
-// =========================
-// 📚 REACTIONS
-// =========================
+//  REACTIONS
 
 export const likeReview = async (userId: string, reviewId: string, type: "Like" | "Love" | "Wow" = "Like") => {
   const reactionRef = doc(db, "reactions", `${userId}_review_${reviewId}`);
@@ -238,9 +254,7 @@ export const likeComment = async (userId: string, commentId: string, type: "Like
   });
 };
 
-// =========================
-// 📚 READING LIST
-// =========================
+//  READING LIST
 
 export const updateReadingList = async (
   userId: string,

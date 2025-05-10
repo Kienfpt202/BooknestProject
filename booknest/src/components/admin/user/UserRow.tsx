@@ -10,7 +10,7 @@ interface UserRowProps {
 const UserRow: React.FC<UserRowProps> = ({ name, email, avatar_url, onDelete }) => {
   return (
     <tr className="border-t">
-      <td className="py-3 px-4">{name}</td>
+      <td className="py-3 px-4">{name}</td> {/* Hiển thị tên người dùng */}
       <td className="py-3 px-4">{email}</td>
       <td className="py-3 px-4">•••••••</td>
       <td className="py-3 px-4">{avatar_url}</td>

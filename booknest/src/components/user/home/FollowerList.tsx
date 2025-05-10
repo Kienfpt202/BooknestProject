@@ -1,17 +1,15 @@
 import Image from "next/image";
 
 const followers = [
-  { name: "Hoàng Huy", avatar: "/images/avatar1.jpg" },
-  { name: "Quang Minh", avatar: "/images/avatar2.jpg" },
-  { name: "Ngọc Lan", avatar: "/images/avatar3.jpg" },
+  { name: "Hoàng Huy", avatar: "/images/default-avatar.png" },
+  { name: "Quang Minh", avatar: "/images/default-avatar.png" },
+  { name: "Ngọc Lan", avatar: "/images/default-avatar.png" },
 ];
 
 const FollowerList = () => {
   return (
     <div className="bg-white shadow-md p-4 rounded-md w-60">
-
-      <h3 className="font-semibold text-gray-700 mb-3"> Active followers </h3>
-
+      <h3 className="font-semibold text-gray-700 mb-3">Active followers</h3>
       <ul>
         {followers.map((follower, index) => (
           <li key={index} className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-100 transition">
@@ -26,7 +24,6 @@ const FollowerList = () => {
           </li>
         ))}
       </ul>
-
     </div>
   );
 };

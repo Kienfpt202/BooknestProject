@@ -9,7 +9,7 @@ import UserTable from "@components/admin/user/UserTable";
 import Pagination from "@components/admin/Pagination";
 import NoDataMessage from "@components/admin/default/NoDataMessage";
 
-const itemsPerPage = 6;
+const itemsPerPage = 5;
 
 const UserPage = () => {
   const [users, setUsers] = useState([]);
@@ -26,9 +26,9 @@ const UserPage = () => {
         const data = doc.data();
         return {
           id: doc.id,
-          name: data.name || "No name",
+          name: data.displayName || "No name", 
           email: data.email || "No email",
-          avatar_url: data.avatar_url || "",
+          avatar_url: data.avatar_url || "No avatar",
         };
       });
       setUsers(userList);
@@ -38,7 +38,9 @@ const UserPage = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this user?")) return;
+    const confirmed = confirm("Are you sure you want to delete this user?");
+    if (!confirmed) return;
+
     try {
       await deleteDoc(doc(db, "users", id));
       setUsers((prev) => prev.filter((user) => user.id !== id));
@@ -59,7 +61,7 @@ const UserPage = () => {
         <Navbar />
         <div className="mt-6">
           {users.length === 0 ? (
-            <NoDataMessage /> // Hiển thị khi không có người dùng
+            <NoDataMessage />
           ) : (
             <>
               <UserTable users={currentUsers} onDelete={handleDelete} />
@@ -75,5 +77,6 @@ const UserPage = () => {
       </div>
     </div>
   );
-}
+};
+
 export default UserPage;

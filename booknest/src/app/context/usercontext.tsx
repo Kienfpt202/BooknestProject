@@ -7,12 +7,16 @@ import {
   useEffect,
   ReactNode,
 } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
+import { auth, db } from "@lib/firebase";
 
 export type User = {
   uid: string;
   email: string;
   name: string;
   avatar: string;
+  role: "admin" | "user";
   displayName?: string;
 };
 
@@ -22,6 +26,7 @@ type UserContextType = {
   setCurrentUser: (user: User | null) => void;
   logout: () => void;
   loading: boolean;
+  isAdmin: boolean;
 };
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -29,18 +34,45 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [currentUser, setUserState] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const isAuthenticated = !!currentUser;
 
+  const isAuthenticated = !!currentUser;
+  const isAdmin = currentUser?.role === "admin";
+
+  // Theo dõi trạng thái người dùng từ Firebase Auth
   useEffect(() => {
-    const storedUser = localStorage.getItem("booknest-user");
-    if (storedUser) {
-      try {
-        setUserState(JSON.parse(storedUser));
-      } catch (err) {
-        console.error("Failed to parse user from localStorage", err);
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        try {
+          const docRef = doc(db, "users", firebaseUser.uid);
+          const docSnap = await getDoc(docRef);
+
+          if (docSnap.exists()) {
+            const userData = docSnap.data();
+            const user: User = {
+              uid: firebaseUser.uid,
+              email: firebaseUser.email || "",
+              name: userData.name || "",
+              avatar: userData.avatar || "",
+              role: userData.role || "user",
+              displayName: firebaseUser.displayName || "",
+            };
+            setUserState(user);
+            localStorage.setItem("booknest-user", JSON.stringify(user));
+          } else {
+            console.warn("No user document found in Firestore");
+            setUserState(null);
+          }
+        } catch (error) {
+          console.error("Error fetching user data from Firestore:", error);
+          setUserState(null);
+        }
+      } else {
+        setUserState(null);
       }
-    }
-    setLoading(false);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const setCurrentUser = (user: User | null) => {
@@ -54,13 +86,21 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = () => {
     localStorage.removeItem("booknest-user");
-    localStorage.removeItem("booknest-pending-path"); // 👈 Xóa luôn pending path
+    localStorage.removeItem("booknest-pending-path");
     setUserState(null);
+    auth.signOut();
   };
 
   return (
     <UserContext.Provider
-      value={{ currentUser, setCurrentUser, logout, loading, isAuthenticated }}
+      value={{
+        currentUser,
+        setCurrentUser,
+        logout,
+        loading,
+        isAuthenticated,
+        isAdmin,
+      }}
     >
       {children}
     </UserContext.Provider>

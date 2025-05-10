@@ -26,7 +26,7 @@ const FollowersRead = () => {
         {books.map((book, index) => (
           <a key={index} href={book.link} className="group relative w-32 h-40 flex flex-col items-center">
             <img
-              src={book.image}
+              src="/images/harry_Book.jpg"
               alt={book.title}
               className="w-32 h-40 object-cover rounded-lg shadow-md group-hover:scale-105 transition-transform"
             />

@@ -77,7 +77,7 @@ const RegisterForm = () => {
       } else if (error.code === "auth/weak-password") {
         setError("Password is too weak. Please enter a stronger password.");
       } else {
-        setError(error.message || "ĐRegistration failed. Please try again.");
+        setError(error.message || "Registration failed. Please try again.");
       }
     } finally {
       setIsSubmitting(false);

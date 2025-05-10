@@ -9,7 +9,7 @@ export default function ProfileHeader() {
   const { currentUser } = useAuth();
 
   const displayName = currentUser?.name || "Unknown User";
-  const avatarUrl = currentUser?.avatar || "/avatar.png";
+  const avatarUrl = currentUser?.avatar || "/images/default-avatar.png";
 
   return (
     <div className="relative bg-gradient-to-r from-[#f2e3cd] to-[#e0c197] rounded-b-3xl shadow-lg p-8 text-[#5a3b2e]">

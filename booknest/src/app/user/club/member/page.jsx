@@ -24,7 +24,6 @@ export default function ClubMembersPage() {
 
         {/* Nội dung chính */}
         <div className="pt-20 px-6 h-[calc(100vh-70px)] overflow-auto">
-          <h1 className="text-2xl font-bold text-[#5b3b1c] mb-4">{clubName}</h1>
           <ClubMembers clubName={clubName} />
         </div>
       </div>

@@ -1,18 +1,29 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@context/usercontext"; // Giả sử bạn có context user
 import { createClub } from "@lib/firestore"; // Import hàm createClub từ firestore
+import { toast } from "react-toastify"; // Import toast từ react-toastify
 
 const CreateClub: React.FC = () => {
-  const [clubName, setClubName] = useState("Tran Van Tuong");
-  const [description, setDescription] = useState("bla bla bla");
+  const [clubName, setClubName] = useState("");
+  const [description, setDescription] = useState("");
   const [scope, setScope] = useState("Private");
   const [loading, setLoading] = useState(false); // Thêm state loading
   const [error, setError] = useState<string | null>(null); // Thêm state error để hiển thị thông báo lỗi
 
   const router = useRouter();
   const { currentUser } = useAuth(); // Lấy uid từ context
+
+  useEffect(() => {
+    if (currentUser && currentUser.role !== "user") {
+      toast.error("You don't have permission to create a club."); // Hiển thị thông báo lỗi
+    }
+  }, [currentUser]);
+
+  if (!currentUser || currentUser.role !== "user") {
+    return null; // Nếu không phải user, không hiển thị gì (hoặc có thể thay bằng loading)
+  }
 
   const handleCreateClub = async () => {
     if (!currentUser) return;
@@ -44,7 +55,6 @@ const CreateClub: React.FC = () => {
     <div className="flex flex-col items-start p-6">
       <h2 className="text-xl font-semibold text-gray-700 mb-6">Create club</h2>
       <div className="bg-white rounded-md shadow p-6 w-full max-w-md space-y-4">
-
         {/* Club Name */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Club name</label>

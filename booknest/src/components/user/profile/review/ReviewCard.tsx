@@ -10,13 +10,13 @@ interface ReviewCardProps {
   comments: number;
 }
 
-export default function ReviewCard({ name, avatar, time, content, likes, comments }: ReviewCardProps) {
+export default function ReviewCard({ name, time, content, likes, comments }: ReviewCardProps) {
   return (
     <div className="bg-[#fdf5f0] p-4 rounded-xl shadow border border-[#e3d4c0] w-full max-w-2xl mx-auto space-y-2">
       {/* Header */}
       <div className="flex justify-between items-start">
         <div className="flex items-center space-x-2">
-          <img src={avatar} alt="avatar" className="w-8 h-8 rounded-full" />
+          <img src="/images/default-avatar.png" alt="avatar" className="w-8 h-8 rounded-full" />
           <div>
             <p className="text-sm font-semibold text-[#5b3b1c]">{name}</p>
             <p className="text-xs text-gray-500">{time}</p>

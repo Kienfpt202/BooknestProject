@@ -37,7 +37,7 @@ const AvatarDropdown = () => {
 
   if (!currentUser) return null;
 
-  const avatarSrc = currentUser.avatar?.trim() || "/avatar.png";
+  const avatarSrc = currentUser.avatar?.trim() || "/images/default-avatar.png"; // Updated path
 
   return (
     <div className="relative" ref={dropdownRef}>

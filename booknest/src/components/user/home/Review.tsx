@@ -20,7 +20,7 @@ import { useAuth } from "@context/usercontext";
 interface ReviewProps {
   id: string;
   author: string;
-  avatar: string;
+  avatar: string; // original avatar passed but overridden
   content: string;
   image?: string;
   bookTitle: string;
@@ -39,7 +39,8 @@ interface Comment {
 const Review: React.FC<ReviewProps> = ({
   id,
   author,
-  avatar,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  avatar: _avatar, // original avatar (unused)
   content,
   image,
   bookTitle,
@@ -51,24 +52,33 @@ const Review: React.FC<ReviewProps> = ({
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
 
-  // Check if current user liked this review
+  // Always use default avatar for reviewer
+  const avatar = "/images/default-avatar.png";
+
+  // --- Effect: Fetch like status and count ---
   useEffect(() => {
     if (!currentUser) return;
+
     const likeRef = collection(db, "review_reaction");
     const q = query(likeRef, where("review_id", "==", id));
+
     const unsub = onSnapshot(q, (snapshot) => {
       const likes = snapshot.docs;
-      const hasLiked = likes.some((doc) => doc.data().user_id === currentUser.uid);
+      const hasLiked = likes.some(
+        (doc) => doc.data().user_id === currentUser.uid
+      );
       setLiked(hasLiked);
       setLikeCount(likes.length);
     });
+
     return () => unsub();
   }, [currentUser, id]);
 
-  // Get comments
+  // --- Effect: Fetch comments ---
   useEffect(() => {
     const commentRef = collection(db, "review_comment");
     const q = query(commentRef, where("review_id", "==", id));
+
     const unsub = onSnapshot(q, (snapshot) => {
       setComments(
         snapshot.docs.map((doc) => ({
@@ -77,9 +87,11 @@ const Review: React.FC<ReviewProps> = ({
         }))
       );
     });
-    return () => unsub();
-  }, [id]);  
 
+    return () => unsub();
+  }, [id]);
+
+  // --- Handler: Like/unlike review ---
   const handleLike = async () => {
     if (!currentUser) return;
 
@@ -104,6 +116,7 @@ const Review: React.FC<ReviewProps> = ({
     }
   };
 
+  // --- Handler: Post comment ---
   const handleComment = async () => {
     if (!currentUser || newComment.trim().length === 0) return;
 
@@ -111,7 +124,7 @@ const Review: React.FC<ReviewProps> = ({
       review_id: id,
       user_id: currentUser.uid,
       username: currentUser.displayName || currentUser.name || "Anonymous",
-      avatar: currentUser.avatar || "/default-avatar.png",
+      avatar: currentUser.avatar || "/images/default-avatar.png",
       comment: newComment.trim(),
       commented_at: Timestamp.now(),
     });
@@ -121,6 +134,7 @@ const Review: React.FC<ReviewProps> = ({
 
   return (
     <div className="bg-white shadow-md rounded-md p-4 mb-6">
+      {/* Author info */}
       <div className="flex items-center mb-2">
         <Image
           src={avatar}
@@ -134,8 +148,10 @@ const Review: React.FC<ReviewProps> = ({
         </Link>
       </div>
 
+      {/* Review content */}
       <p className="text-gray-700 mb-2">{content}</p>
 
+      {/* Optional image */}
       {image && (
         <div className="mt-3">
           <Image
@@ -148,21 +164,25 @@ const Review: React.FC<ReviewProps> = ({
         </div>
       )}
 
+      {/* Book info */}
       <p className="mt-2 text-sm italic text-gray-600">
         📖 {bookTitle} — {bookAuthor}
       </p>
 
+      {/* Reaction bar */}
       <div className="flex items-center justify-between mt-3 text-gray-500">
         <button
           onClick={handleLike}
-          className={`transition ${liked ? "text-red-500 font-semibold" : "hover:text-red-500"}`}
+          className={`transition ${
+            liked ? "text-red-500 font-semibold" : "hover:text-red-500"
+          }`}
         >
           👍 {liked ? "Liked" : "Like"} ({likeCount})
         </button>
         <span>💬 {comments.length} Comment{comments.length !== 1 && "s"}</span>
       </div>
 
-      {/* Comment Box */}
+      {/* Comment input */}
       {currentUser && (
         <div className="mt-4">
           <textarea
@@ -181,12 +201,12 @@ const Review: React.FC<ReviewProps> = ({
         </div>
       )}
 
-      {/* Comment List */}
+      {/* Comment list */}
       <div className="mt-4 space-y-2">
         {comments.map((c) => (
           <div key={c.id} className="flex items-start gap-3">
             <Image
-              src={c.avatar}
+              src={c.avatar || "/images/default-avatar.png"}
               alt={c.username}
               width={32}
               height={32}
