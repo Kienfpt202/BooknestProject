@@ -17,7 +17,6 @@ interface ClubCardProps {
 const ClubCard: React.FC<ClubCardProps> = ({
   clubId,
   name,
-  owner,
   description,
   status,
   isMyClub,
@@ -29,8 +28,7 @@ const ClubCard: React.FC<ClubCardProps> = ({
 
   const handleJoin = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const confirmed = confirm(`Do you really want to join the club "${name}"?`);
-    if (confirmed && onJoin && clubId) {
+    if (confirm(`Do you really want to join the club "${name}"?`) && onJoin && clubId) {
       onJoin(clubId);
     }
   };
@@ -43,8 +41,7 @@ const ClubCard: React.FC<ClubCardProps> = ({
 
   const handleExit = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const confirmed = confirm(`Do you really want to exit the club "${name}"?`);
-    if (confirmed && onExit && clubId) {
+    if (confirm(`Do you really want to exit the club "${name}"?`) && onExit && clubId) {
       onExit(clubId);
       setIsJoined(false);
       toast.success(`You have exited the club "${name}".`);
@@ -96,18 +93,13 @@ const ClubCard: React.FC<ClubCardProps> = ({
 
   return (
     <div className="bg-white rounded-lg shadow-md p-4 w-64 hover:shadow-lg transition duration-300 ease-in-out">
-      <Link href={`/club/discussion/${clubId}`} passHref>
-        <div className="cursor-pointer">
-          <h3 className="text-lg font-semibold text-gray-800">{name}</h3>
-          <p className="text-sm text-gray-600">Owner: {owner}</p>
-          <p className="text-sm text-gray-600">Description: {description}</p>
-        </div>
+      <Link href={`/user/club/discussion/${clubId}`} className="block cursor-pointer">
+        <h3 className="text-lg font-semibold text-gray-800">{name}</h3>
+        <p className="text-sm text-gray-600">Description: {description}</p>
       </Link>
 
-      {/* Join/Exit/Undo section */}
       {renderActionButton()}
 
-      {/* Owner actions (only visible if it's user's own club) */}
       {isMyClub && (
         <div className="mt-4 flex space-x-2">
           <button
@@ -117,7 +109,7 @@ const ClubCard: React.FC<ClubCardProps> = ({
             <Pencil size={14} />
             Edit
           </button>
-          <Link href={`/club/member`} passHref>
+          <Link href="/user/club/member">
             <button
               onClick={(e) => e.stopPropagation()}
               className="flex items-center gap-1 border border-[#8B5A2B] text-[#8B5A2B] px-2 py-1 rounded-md text-sm hover:bg-[#8B5A2B] hover:text-white transition"
@@ -127,7 +119,10 @@ const ClubCard: React.FC<ClubCardProps> = ({
             </button>
           </Link>
           <button
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              toast.error('Delete functionality not implemented');
+            }}
             className="flex items-center gap-1 border border-[#8B5A2B] text-[#8B5A2B] px-2 py-1 rounded-md text-sm hover:bg-red-600 hover:text-white transition"
           >
             <Trash2 size={14} />

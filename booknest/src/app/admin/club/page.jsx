@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 import { db } from "@lib/firebase";
@@ -7,7 +8,7 @@ import Sidebar from "@components/admin/dashboard/Sidebar";
 import Navbar from "@components/admin/dashboard/Navbar";
 import ClubTable from "@components/admin/club/ClubTable";
 import Pagination from "@components/admin/Pagination";
-import NoDataMessage from "@components/admin/default/NoDataMessage"; // Import NoDataMessage component
+import NoDataMessage from "@components/admin/default/NoDataMessage";
 
 const itemsPerPage = 6;
 
@@ -21,29 +22,31 @@ const ClubPage = () => {
 
   const fetchClubs = async () => {
     try {
-      const querySnapshot = await getDocs(collection(db, "clubs"));
+      const querySnapshot = await getDocs(collection(db, "book_clubs")); // ✅ collection đúng
       const clubList = querySnapshot.docs.map((doc) => {
         const data = doc.data();
         return {
           id: doc.id,
           name: data.name || "No name",
           description: data.description || "No description",
-          image_url: data.image_url || "",
+          owner_id: data.owner_id || "Unknown Owner", // ✅ thêm field owner_id
         };
       });
       setClubs(clubList);
     } catch (error) {
-      console.error("Lỗi khi lấy dữ liệu câu lạc bộ:", error);
+      console.error("Error getting club data:", error);
     }
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Bạn có chắc muốn xoá câu lạc bộ này?")) return;
+    const confirmed = confirm("Are you sure you want to delete this club?");
+    if (!confirmed) return;
+
     try {
-      await deleteDoc(doc(db, "clubs", id));
+      await deleteDoc(doc(db, "book_clubs", id)); // ✅ đúng collection khi delete
       setClubs((prev) => prev.filter((club) => club.id !== id));
     } catch (error) {
-      console.error("Lỗi khi xoá câu lạc bộ:", error);
+      console.error("Error while deleting club:", error);
     }
   };
 
@@ -55,12 +58,11 @@ const ClubPage = () => {
   return (
     <div className="flex">
       <Sidebar />
-      <div className="flex-1 ml-64 min-h-screen bg-[#F5F5F5] p-6">
+      <div className="flex-1 ml-64 min-h-screen bg-gray-100 p-6">
         <Navbar />
         <div className="mt-6">
-          {/* Kiểm tra nếu không có câu lạc bộ */}
           {clubs.length === 0 ? (
-            <NoDataMessage /> // Hiển thị thông báo nếu không có dữ liệu
+            <NoDataMessage />
           ) : (
             <>
               <ClubTable clubs={currentClubs} onDelete={handleDelete} />

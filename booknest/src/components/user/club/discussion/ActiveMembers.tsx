@@ -22,7 +22,7 @@ const ActiveMembers: React.FC = () => {
         {members.map((member, index) => (
           <div key={index} className="flex items-center">
             <img
-              src={member.avatar}
+              src="/images/default-avatar.png"
               alt={`${member.name}'s avatar`}
               className="w-8 h-8 rounded-full mr-3"
             />

@@ -37,7 +37,7 @@ const AvatarDropdown = () => {
 
   if (!currentUser) return null;
 
-  const avatarSrc = currentUser.avatar?.trim() || "/images/default-avatar.png"; // Updated path
+  const avatarSrc = currentUser.avatar || "/images/default-avatar.png"; // Use avatar from user context
 
   return (
     <div className="relative" ref={dropdownRef}>

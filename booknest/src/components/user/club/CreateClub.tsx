@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@context/usercontext"; // Giả sử bạn có context user
@@ -41,8 +42,8 @@ const CreateClub: React.FC = () => {
       // Gọi hàm createClub để tạo câu lạc bộ
       const clubId = await createClub(clubName, description, scope === "Private", currentUser.uid);
 
-      // Điều hướng đến trang discussion, truyền kèm clubId
-      router.push(`/user/club/discussion?clubId=${clubId}`);
+      // Điều hướng đến trang discussion với đường dẫn đúng
+      router.push(`/club/discussion/${clubId}`);
     } catch (error) {
       console.error("Error creating club:", error);
       setError("Failed to create the club. Please try again."); // Hiển thị thông báo lỗi

@@ -1,94 +1,114 @@
+// app/club/page.jsx
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { db } from "@lib/firebase";
+import { collection, getDocs } from "firebase/firestore";
+import { useAuth } from "@context/usercontext";
 import Sidebar from "@components/user/dashboard/Sidebar";
 import Navbar from "@components/user/dashboard/Navbar";
 import ClubSection from "@components/user/club/ClubSection";
 
 const ClubPage = () => {
-  // Initial data for clubs
-  const [availableClubs, setAvailableClubs] = useState([
-    { clubId: "1", name: "Public Club", owner: "Owner A", description: "A public club", status: undefined },
-    { clubId: "2", name: "Private Club", owner: "Owner B", description: "A private club", status: "not-confirmed" },
-  ]);
+  const { currentUser } = useAuth();
+  const [availableClubs, setAvailableClubs] = useState([]);
+  const [joinedClubs, setJoinedClubs] = useState([]);
+  const [myClubs, setMyClubs] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const [joinedClubs, setJoinedClubs] = useState([
-    { clubId: "3", name: "Joined Club", owner: "Owner C", description: "Already joined", status: "enrolled" },
-  ]);
+  useEffect(() => {
+    const fetchClubs = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "book_clubs"));
+        const allClubs = querySnapshot.docs.map((doc) => ({
+          clubId: doc.id,
+          ...doc.data(),
+        }));
 
-  const [myClubs, setMyClubs] = useState([
-    { clubId: "4", name: "My Club", owner: "Owner D", description: "My own club", status: undefined },
-  ]);
+        const my = [];
+        const joined = [];
+        const available = [];
 
-  // Handle joining a club
-  const handleJoinClub = (clubId) => {
-    setAvailableClubs((prevAvailableClubs) => {
-      const clubToJoin = prevAvailableClubs.find((club) => club.clubId === clubId);
-      if (clubToJoin) {
-        // Update the joined club's status
-        const updatedClub = {
-          ...clubToJoin,
-          status: clubToJoin.status === "not-confirmed" ? "not-confirmed" : "enrolled",
-        };
-
-        // Add the club to the joinedClubs list only if it doesn't already exist
-        setJoinedClubs((prevJoinedClubs) => {
-          const isAlreadyJoined = prevJoinedClubs.some((club) => club.clubId === clubId);
-          if (!isAlreadyJoined) {
-            return [...prevJoinedClubs, updatedClub];
+        allClubs.forEach((club) => {
+          if (club.owner_id === currentUser.uid) {
+            my.push(club);
+          } else if (club.members?.includes(currentUser.uid)) {
+            joined.push({ ...club, status: "enrolled" });
+          } else {
+            available.push(club);
           }
-          return prevJoinedClubs;
         });
 
-        // Remove the club from the availableClubs list
-        return prevAvailableClubs.filter((club) => club.clubId !== clubId);
+        setMyClubs(my);
+        setJoinedClubs(joined);
+        setAvailableClubs(available);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching clubs:", error);
+        setLoading(false);
       }
-      return prevAvailableClubs;
+    };
+
+    if (currentUser?.uid) {
+      fetchClubs();
+    }
+  }, [currentUser]);
+
+  const handleJoinClub = (clubId) => {
+    setAvailableClubs((prev) => {
+      const club = prev.find((c) => c.clubId === clubId);
+      if (club) {
+        setJoinedClubs((prevJoined) => {
+          const exists = prevJoined.some((c) => c.clubId === clubId);
+          if (!exists) {
+            return [...prevJoined, { ...club, status: "enrolled" }];
+          }
+          return prevJoined;
+        });
+        return prev.filter((c) => c.clubId !== clubId);
+      }
+      return prev;
     });
   };
 
-  // Handle exiting a club
   const handleExitClub = (clubId) => {
-    setJoinedClubs((prevJoinedClubs) => {
-      const clubToExit = prevJoinedClubs.find((club) => club.clubId === clubId);
-      if (clubToExit) {
-        // Update the club's status to make it available again
-        const updatedClub = { ...clubToExit, status: undefined };
-
-        // Add the club back to the availableClubs list
-        setAvailableClubs((prevAvailableClubs) => [...prevAvailableClubs, updatedClub]);
-
-        // Remove the club from the joinedClubs list
-        return prevJoinedClubs.filter((club) => club.clubId !== clubId);
+    setJoinedClubs((prevJoined) => {
+      const club = prevJoined.find((c) => c.clubId === clubId);
+      if (club) {
+        setAvailableClubs((prevAvailable) => {
+          const alreadyExists = prevAvailable.some((c) => c.clubId === clubId);
+          if (!alreadyExists) {
+            return [...prevAvailable, { ...club, status: undefined }];
+          }
+          return prevAvailable;
+        });
+        return prevJoined.filter((c) => c.clubId !== clubId);
       }
-      return prevJoinedClubs;
+      return prevJoined;
     });
   };
 
   return (
     <div className="flex bg-gray-100">
-      {/* Sidebar */}
       <div className="w-64 bg-white shadow-md fixed left-0 top-[70px] h-[calc(100vh-70px)]">
         <Sidebar />
       </div>
 
-      {/* Main content */}
       <div className="flex-1 ml-64">
-        {/* Navbar */}
         <div className="fixed top-0 left-64 w-[calc(100%-16rem)] h-16 bg-white shadow-md flex items-center px-6 z-50">
           <Navbar />
         </div>
 
-        {/* Main content */}
         <div className="pt-20 px-6 space-y-6 overflow-auto min-h-screen">
-          {/* Available Clubs */}
-          <ClubSection title="Available clubs" clubs={availableClubs} onJoin={handleJoinClub} />
-
-          {/* Joined Clubs */}
-          <ClubSection title="Joined clubs" clubs={joinedClubs} onExit={handleExitClub} />
-
-          {/* My Clubs */}
-          <ClubSection title="My Clubs" clubs={myClubs} isMyClub showCreateButton />
+          {loading ? (
+            <p>Loading clubs...</p>
+          ) : (
+            <>
+              <ClubSection title="Available clubs" clubs={availableClubs} onJoin={handleJoinClub} />
+              <ClubSection title="Joined clubs" clubs={joinedClubs} onExit={handleExitClub} />
+              <ClubSection title="My Clubs" clubs={myClubs} isMyClub showCreateButton />
+            </>
+          )}
         </div>
       </div>
     </div>

@@ -232,24 +232,22 @@ export const addDiscussion = async (
 
 //  REACTIONS
 
-export const likeReview = async (userId: string, reviewId: string, type: "Like" | "Love" | "Wow" = "Like") => {
+export const likeReview = async (userId: string, reviewId: string) => {
   const reactionRef = doc(db, "reactions", `${userId}_review_${reviewId}`);
   await setDoc(reactionRef, {
     user_id: userId,
     review_id: reviewId,
     comment_id: null,
-    type,
     created_at: serverTimestamp(),
   });
 };
 
-export const likeComment = async (userId: string, commentId: string, type: "Like" | "Love" | "Wow" = "Like") => {
+export const likeComment = async (userId: string, commentId: string) => {
   const reactionRef = doc(db, "reactions", `${userId}_comment_${commentId}`);
   await setDoc(reactionRef, {
     user_id: userId,
     review_id: null,
     comment_id: commentId,
-    type,
     created_at: serverTimestamp(),
   });
 };

@@ -43,13 +43,13 @@ const Navbar = () => {
               href="/auth/login"
               className="px-4 py-2 text-sm font-semibold text-[#A7824B] hover:text-white hover:bg-[#A7824B] border border-[#A7824B] rounded transition"
             >
-              Đăng nhập
+              Login
             </Link>
             <Link
               href="/auth/register"
               className="px-4 py-2 text-sm font-semibold text-[#A7824B] hover:text-white hover:bg-[#A7824B] border border-[#A7824B] rounded transition"
             >
-              Đăng ký
+              Register
             </Link>
           </>
         )}

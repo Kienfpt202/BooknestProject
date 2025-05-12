@@ -1,17 +1,20 @@
+// components/user/club/discussion/DiscussionThread.tsx
 import React from 'react';
 
 interface DiscussionThreadProps {
   userName: string;
   content: string;
+  pollOptions?: string[];
+  voteCounts?: { [key: string]: number };
+  onVote?: (option: string) => void;
 }
 
-const DiscussionThread: React.FC<DiscussionThreadProps> = ({ userName, content }) => {
+const DiscussionThread: React.FC<DiscussionThreadProps> = ({ userName, content, pollOptions, voteCounts, onVote }) => {
   return (
     <div className="p-3 bg-white border border-gray-200 rounded-lg">
-      {/* Header */}
       <div className="flex items-start">
         <img
-          src="/avatars/nguyen-kien.jpg"
+          src="/images/default-avatar.png"
           alt={`${userName}'s avatar`}
           className="w-8 h-8 rounded-full mr-2"
         />
@@ -27,61 +30,35 @@ const DiscussionThread: React.FC<DiscussionThreadProps> = ({ userName, content }
           </p>
         </div>
       </div>
-      {/* Voting Options */}
       <div className="mt-3 space-y-2">
-        <button className="flex items-center w-full px-3 py-2 border border-gray-300 rounded-full text-gray-600 hover:bg-gray-100 text-sm">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4 mr-2"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M5 13l4 4L19 7"
-            />
-          </svg>
-          Harry Potter <span className="ml-2 text-gray-500">25</span>
-        </button>
-        <button className="flex items-center w-full px-3 py-2 border border-gray-300 rounded-full text-gray-600 hover:bg-gray-100 text-sm">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4 mr-2"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M5 13l4 4L19 7"
-            />
-          </svg>
-          Pippi Long Stocking <span className="ml-2 text-gray-500">45</span>
-        </button>
-        <button className="flex items-center w-full px-3 py-2 border border-gray-300 rounded-full text-gray-600 hover:bg-gray-100 text-sm">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4 mr-2"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M5 13l4 4L19 7"
-            />
-          </svg>
-          Conan <span className="ml-2 text-gray-500">15</span>
-        </button>
+        {pollOptions && pollOptions.length > 0 ? (
+          pollOptions.map((option, index) => (
+            <button
+              key={index}
+              onClick={() => onVote && onVote(option)}
+              className="flex items-center w-full px-3 py-2 border border-gray-300 rounded-full text-gray-600 hover:bg-gray-100 text-sm"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+              {option} <span className="ml-2 text-gray-500">{voteCounts ? voteCounts[option] || 0 : 0}</span>
+            </button>
+          ))
+        ) : (
+          <p className="text-gray-500 text-sm">No poll options available.</p>
+        )}
       </div>
-      {/* Like and Comment Buttons */}
       <div className="flex items-center mt-3 space-x-2">
         <button className="flex items-center px-2 py-1 text-gray-600 hover:bg-gray-100 text-sm">
           <svg
