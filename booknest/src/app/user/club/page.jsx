@@ -1,20 +1,36 @@
-// app/club/page.jsx
 "use client";
 
 import { useEffect, useState } from "react";
 import { db } from "@lib/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { useAuth } from "@context/usercontext";
+
 import Sidebar from "@components/user/dashboard/Sidebar";
 import Navbar from "@components/user/dashboard/Navbar";
 import ClubSection from "@components/user/club/ClubSection";
+import Pagination from "@components/admin/Pagination";
+
+const itemsPerPage = 4;
 
 const ClubPage = () => {
   const { currentUser } = useAuth();
+
   const [availableClubs, setAvailableClubs] = useState([]);
   const [joinedClubs, setJoinedClubs] = useState([]);
   const [myClubs, setMyClubs] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Phân trang cho từng loại club
+  const [availablePage, setAvailablePage] = useState(1);
+  const [joinedPage, setJoinedPage] = useState(1);
+  const [myPage, setMyPage] = useState(1);
+
+  // Helper function chia trang
+  const paginate = (list, page) => {
+    const start = (page - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    return list.slice(start, end);
+  };
 
   useEffect(() => {
     const fetchClubs = async () => {
@@ -88,6 +104,11 @@ const ClubPage = () => {
     });
   };
 
+  // Dữ liệu đã phân trang
+  const paginatedAvailable = paginate(availableClubs, availablePage);
+  const paginatedJoined = paginate(joinedClubs, joinedPage);
+  const paginatedMy = paginate(myClubs, myPage);
+
   return (
     <div className="flex bg-gray-100">
       <div className="w-64 bg-white shadow-md fixed left-0 top-[70px] h-[calc(100vh-70px)]">
@@ -99,14 +120,50 @@ const ClubPage = () => {
           <Navbar />
         </div>
 
-        <div className="pt-20 px-6 space-y-6 overflow-auto min-h-screen">
+        <div className="pt-20 px-6 space-y-10 overflow-auto min-h-screen">
           {loading ? (
             <p>Loading clubs...</p>
           ) : (
             <>
-              <ClubSection title="Available clubs" clubs={availableClubs} onJoin={handleJoinClub} />
-              <ClubSection title="Joined clubs" clubs={joinedClubs} onExit={handleExitClub} />
-              <ClubSection title="My Clubs" clubs={myClubs} isMyClub showCreateButton />
+              {/* Available Clubs Section */}
+              <ClubSection
+                title="Available clubs"
+                clubs={paginatedAvailable}
+                onJoin={handleJoinClub}
+              />
+              <Pagination
+                totalItems={availableClubs.length}
+                itemsPerPage={itemsPerPage}
+                currentPage={availablePage}
+                onPageChange={setAvailablePage}
+              />
+
+              {/* Joined Clubs Section */}
+              <ClubSection
+                title="Joined clubs"
+                clubs={paginatedJoined}
+                onExit={handleExitClub}
+              />
+              <Pagination
+                totalItems={joinedClubs.length}
+                itemsPerPage={itemsPerPage}
+                currentPage={joinedPage}
+                onPageChange={setJoinedPage}
+              />
+
+              {/* My Clubs Section */}
+              <ClubSection
+                title="My Clubs"
+                clubs={paginatedMy}
+                isMyClub
+                showCreateButton
+              />
+              <Pagination
+                totalItems={myClubs.length}
+                itemsPerPage={itemsPerPage}
+                currentPage={myPage}
+                onPageChange={setMyPage}
+              />
             </>
           )}
         </div>

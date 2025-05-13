@@ -1,4 +1,5 @@
 "use client";
+
 import Sidebar from "@components/user/dashboard/Sidebar";
 import Navbar from "@components/user/dashboard/Navbar";
 import BookList from "@components/user/profile/book-list/BookSection";
@@ -30,27 +31,34 @@ const booksData = [
 
 const Dashboard = () => {
   return (
-    <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
-      <Sidebar />
+    <div className="flex bg-[#f5f6f8] min-h-screen">
+      {/* Sidebar bên trái */}
+      <aside className="w-[240px] bg-white shadow-md">
+        <Sidebar />
+      </aside>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col ml-64">
-        {/* Navbar */}
-        <Navbar />
+      {/* Main content layout */}
+      <main className="flex-1 flex flex-col">
+        {/* Navbar cố định trên cùng */}
+        <header className="h-16">
+          <Navbar />
+        </header>
 
-        <main className="p-8 overflow-y-auto">
-           {/* Header: Profile Info */}
-                      <ProfileHeader name="Nguyen Chi Kien" avatarUrl="/user-avatar.png" />
-          <h1 className="text-2xl font-bold text-[#8B5E3B] mb-6">
-           Your current lists:
-          </h1>
+        {/* Nội dung chính nằm dưới navbar */}
+        <section className="p-6 space-y-8">
+          {/* Header: Profile Info */}
+          <ProfileHeader name="Nguyen Chi Kien" avatarUrl="/user-avatar.png" />
+
+          {/* Title for book lists */}
+          <h1 className="text-2xl font-bold text-[#8B5E3B] mb-6">Your current lists:</h1>
+
+          {/* Book lists layout */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <BookList title="Reading Books" books={booksData} />
             <BookList title="Finished Reading Books" books={booksData} />
           </div>
-        </main>
-      </div>
+        </section>
+      </main>
     </div>
   );
 };

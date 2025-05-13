@@ -1,41 +1,48 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Sidebar from "@components/user/dashboard/Sidebar";
 import Navbar from "@components/user/dashboard/Navbar";
 import Review from "@components/user/home/Review";
 import FollowerList from "@components/user/home/FollowerList";
-import NewReviewModal from "@components/user/home/NewReviewModal";
+import  {NewReviewModal}  from "@components/user/home/NewReviewModal";
+import { collection, getDocs, query, orderBy } from "firebase/firestore";
+import { db } from "@lib/firebase";
 
 const PersonalBlog = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [reviews, setReviews] = useState([
-    {
-      id: "1",
-      author: "Hoàng Huy",
-      avatar: "/avatar1.jpg",
-      content: "Chào mọi người! Đây là bài viết đầu tiên...",
-      image: "/images/DeMen_Book.jpg",
-      bookTitle: "Dế Mèn Phiêu Lưu Ký",
-      bookAuthor: "Tô Hoài",
-    },
-    {
-      id: "2",
-      author: "Ngọc Lan",
-      avatar: "/avatar3.jpg",
-      content: "What an amazing book!",
-      image: "/images/Atomic_Book.jpg",
-      bookTitle: "Atomic Habits",
-      bookAuthor: "James Clear",
-    },
-  ]);
+  const [reviews, setReviews] = useState([]);
 
-  const handleAddReview = useCallback(
-    (newReview) => {
-      setReviews((prevReviews) => [newReview, ...prevReviews]);
-    },
-    [setReviews]
-  );
+const fetchReviews = async () => {
+  try {
+    const q = query(collection(db, "reviews"), orderBy("createdAt", "desc"));
+    const querySnapshot = await getDocs(q);
+    const reviewsData = querySnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        author: data.author || "Anonymous",
+        avatar: data.avatar || "/images/default-avatar.png",
+        content: data.content || "",
+        image: data.image || null,
+        bookTitle: data.bookTitle || "Unknown Title",
+        bookAuthor: data.bookAuthor || "Unknown Author",
+        createdAt: data.createdAt?.toDate?.() || new Date(), // convert Timestamp to JS Date
+      };
+    });
+    setReviews(reviewsData);
+  } catch (error) {
+    console.error("Error fetching reviews: ", error);
+  }
+};
+
+  useEffect(() => {
+    fetchReviews();
+  }, []);
+
+  const handleAddReview = useCallback((newReview) => {
+    setReviews((prevReviews) => [newReview, ...prevReviews]);
+  }, []);
 
   return (
     <div className="flex bg-gray-100">
@@ -65,10 +72,18 @@ const PersonalBlog = () => {
               </button>
             </div>
 
+            {/* Render từng review */}
             {reviews.map((review) => (
               <Review
                 key={review.id}
-                {...review}
+                id={review.id}
+                author={review.author}
+                avatar={review.avatar}
+                content={review.content}
+                image={review.image}
+                bookTitle={review.bookTitle}
+                bookAuthor={review.bookAuthor}
+                createdAt={review.createdAt}
               />
             ))}
           </div>

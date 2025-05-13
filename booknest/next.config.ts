@@ -1,7 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    domains: ['books.google.com'], // Thêm domain của Google Books vào đây
+  },
 };
 
 export default nextConfig;

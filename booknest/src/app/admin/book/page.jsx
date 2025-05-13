@@ -20,6 +20,13 @@ const BookPage = () => {
     fetchBooks();
   }, []);
 
+  useEffect(() => {
+    const totalPages = Math.ceil(books.length / itemsPerPage);
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages || 1);
+    }
+  }, [books]);
+
   const fetchBooks = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, "books"));

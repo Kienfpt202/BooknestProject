@@ -20,11 +20,12 @@ import { useAuth } from "@context/usercontext";
 interface ReviewProps {
   id: string;
   author: string;
-  avatar: string; // original avatar passed but overridden
+  avatar: string;
   content: string;
   image?: string;
   bookTitle: string;
   bookAuthor: string;
+  createdAt: Timestamp;
 }
 
 interface Comment {
@@ -39,8 +40,6 @@ interface Comment {
 const Review: React.FC<ReviewProps> = ({
   id,
   author,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  avatar: _avatar, // original avatar (unused)
   content,
   image,
   bookTitle,
@@ -51,11 +50,11 @@ const Review: React.FC<ReviewProps> = ({
   const [likeCount, setLikeCount] = useState(0);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  // Always use default avatar for reviewer
   const avatar = "/images/default-avatar.png";
 
-  // --- Effect: Fetch like status and count ---
+  // Fetch like status and count
   useEffect(() => {
     if (!currentUser) return;
 
@@ -74,7 +73,7 @@ const Review: React.FC<ReviewProps> = ({
     return () => unsub();
   }, [currentUser, id]);
 
-  // --- Effect: Fetch comments ---
+  // Fetch comments
   useEffect(() => {
     const commentRef = collection(db, "review_comment");
     const q = query(commentRef, where("review_id", "==", id));
@@ -86,12 +85,13 @@ const Review: React.FC<ReviewProps> = ({
           ...(doc.data() as Omit<Comment, "id">),
         }))
       );
+      setLoading(false); // Set loading to false once comments are fetched
     });
 
     return () => unsub();
   }, [id]);
 
-  // --- Handler: Like/unlike review ---
+  // Handle Like/Unlike Review
   const handleLike = async () => {
     if (!currentUser) return;
 
@@ -116,7 +116,7 @@ const Review: React.FC<ReviewProps> = ({
     }
   };
 
-  // --- Handler: Post comment ---
+  // Handle Comment Submission
   const handleComment = async () => {
     if (!currentUser || newComment.trim().length === 0) return;
 
@@ -143,7 +143,10 @@ const Review: React.FC<ReviewProps> = ({
           height={40}
           className="w-10 h-10 rounded-full object-cover"
         />
-        <Link href={`/user/follower_profile`} className="font-semibold ml-3">
+        <Link 
+          href={author === currentUser?.displayName ? "/user/profile" : "/user/follower_profile"}
+          className="font-semibold ml-3"
+        >
           {author}
         </Link>
       </div>
@@ -173,9 +176,7 @@ const Review: React.FC<ReviewProps> = ({
       <div className="flex items-center justify-between mt-3 text-gray-500">
         <button
           onClick={handleLike}
-          className={`transition ${
-            liked ? "text-red-500 font-semibold" : "hover:text-red-500"
-          }`}
+          className={`transition ${liked ? "text-red-500 font-semibold" : "hover:text-red-500"}`}
         >
           👍 {liked ? "Liked" : "Like"} ({likeCount})
         </button>
@@ -203,21 +204,25 @@ const Review: React.FC<ReviewProps> = ({
 
       {/* Comment list */}
       <div className="mt-4 space-y-2">
-        {comments.map((c) => (
-          <div key={c.id} className="flex items-start gap-3">
-            <Image
-              src={c.avatar || "/images/default-avatar.png"}
-              alt={c.username}
-              width={32}
-              height={32}
-              className="w-8 h-8 rounded-full object-cover"
-            />
-            <div className="bg-gray-100 px-3 py-2 rounded-lg text-sm w-full">
-              <p className="font-semibold">{c.username}</p>
-              <p>{c.comment}</p>
+        {loading ? (
+          <div className="text-center text-gray-500">Loading comments...</div>
+        ) : (
+          comments.map((c) => (
+            <div key={c.id} className="flex items-start gap-3">
+              <Image
+                src={c.avatar || "/images/default-avatar.png"}
+                alt={c.username}
+                width={32}
+                height={32}
+                className="w-8 h-8 rounded-full object-cover"
+              />
+              <div className="bg-gray-100 px-3 py-2 rounded-lg text-sm w-full">
+                <p className="font-semibold">{c.username}</p>
+                <p>{c.comment}</p>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );
