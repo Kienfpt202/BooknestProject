@@ -8,8 +8,7 @@ interface Book {
   id: string;
   title: string;
   author: string;
-  genre: string[];
-  publication_year: number;
+  genre: string[] | string;
   cover_image_url: string;
 }
 
@@ -29,8 +28,11 @@ const BookTable = () => {
           id: doc.id,
           title: data.title || "No title",
           author: data.author || "No author",
-          genre: data.genre || [],
-          publication_year: data.publication_year || 0,
+          genre: Array.isArray(data.genre)
+            ? data.genre
+            : typeof data.genre === "string"
+            ? [data.genre]
+            : [],
           cover_image_url: data.cover_image_url || "",
         };
       });
@@ -41,9 +43,7 @@ const BookTable = () => {
   };
 
   const handleDelete = async (id: string) => {
-    const confirmed = confirm("Are you sure you want to delete this book?");
-    if (!confirmed) return;
-
+    if (!confirm("Are you sure you want to delete this book?")) return;
     try {
       await deleteDoc(doc(db, "books", id));
       setBooks((prev) => prev.filter((book) => book.id !== id));
@@ -53,8 +53,8 @@ const BookTable = () => {
   };
 
   const handleEdit = (id: string) => {
-    // TODO: implement actual navigation/edit logic
-    console.log("Edit book with id:", id);
+    // TODO: Add edit logic or navigation
+    console.log("Edit book:", id);
   };
 
   return (
@@ -62,7 +62,7 @@ const BookTable = () => {
       <table className="w-full text-left border-collapse">
         <thead className="bg-gray-100">
           <tr>
-            {["Title", "Author", "Genre", "Publication Year", "Operation"].map((col) => (
+            {["Title", "Author", "Genre", "Operation"].map((col) => (
               <th key={col} className="py-3 px-4">{col}</th>
             ))}
           </tr>
@@ -73,10 +73,10 @@ const BookTable = () => {
               key={book.id}
               title={book.title}
               author={book.author}
-              genre={book.genre.join(", ")}
-              publication_year={book.publication_year}
+              genre={Array.isArray(book.genre) ? book.genre.join(", ") : book.genre}
               onDelete={() => handleDelete(book.id)}
-              onEdit={() => handleEdit(book.id)} id={""}            />
+              onEdit={() => handleEdit(book.id)}
+            />
           ))}
         </tbody>
       </table>

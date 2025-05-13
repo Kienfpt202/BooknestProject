@@ -11,9 +11,9 @@ function NoDataMessage() {
             <path d="M30 30 L 70 30 Q 80 35, 75 45 L 25 45 Q 20 35, 30 30" fill="currentColor" />
             <path d="M35 25 C 35 20, 40 20, 40 25" fill="lightgray" /> {/* Chỉnh màu tai */}
             <path d="M65 25 C 65 20, 60 20, 60 25" fill="lightgray" /> {/* Chỉnh màu tai */}
-            <text x="45" y="20" font-size="10" fill="black">Z</text> {/* Chỉnh màu chữ Z */}
-            <text x="50" y="25" font-size="10" fill="black">Z</text> {/* Chỉnh màu chữ Z */}
-            <text x="55" y="30" font-size="10" fill="black">Z</text> {/* Chỉnh màu chữ Z */}
+            <text x="45" y="20" fontSize="10" fill="black">Z</text> {/* Chỉnh màu chữ Z */}
+            <text x="50" y="25" fontSize="10" fill="black">Z</text> {/* Chỉnh màu chữ Z */}
+            <text x="55" y="30" fontSize="10" fill="black">Z</text> {/* Chỉnh màu chữ Z */}
           </svg>
         </div>
         <div className="text-lg font-medium text-gray-600 mt-4">No data at this time</div> {/* Chữ đậm vừa */}

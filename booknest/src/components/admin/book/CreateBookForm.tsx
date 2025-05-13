@@ -11,7 +11,6 @@ const CreateBookForm = () => {
     title: "",
     author: "",
     genre: "",
-    publication_year: "",
     cover_image_url: "",
     description: "",
     publisher: "",
@@ -32,7 +31,6 @@ const CreateBookForm = () => {
           title: bookData.title || "",
           author: bookData.authors?.join(", ") || "Unknown",
           genre: bookData.categories?.join(", ") || "",
-          publication_year: bookData.publishedDate || "",
           cover_image_url: bookData.imageLinks?.thumbnail || "",
           description: bookData.description || "",
           publisher: bookData.publisher || "",
@@ -64,7 +62,6 @@ const CreateBookForm = () => {
         title: book.title,
         author: book.author,
         genre: book.genre.split(",").map((g) => g.trim()).join(", "),
-        publishedYear: parseInt(book.publication_year),
         coverImage: book.cover_image_url,
         description: book.description,
         publisher: book.publisher,
@@ -120,21 +117,6 @@ const CreateBookForm = () => {
             id="genre"
             name="genre"
             value={book.genre}
-            onChange={handleChange}
-            required
-            className="mt-1 p-2 border border-gray-300 rounded w-full"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="publication_year" className="block text-sm font-medium text-gray-700">
-            Publication Year
-          </label>
-          <input
-            type="number"
-            id="publication_year"
-            name="publication_year"
-            value={book.publication_year}
             onChange={handleChange}
             required
             className="mt-1 p-2 border border-gray-300 rounded w-full"

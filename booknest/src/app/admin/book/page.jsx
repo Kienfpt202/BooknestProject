@@ -31,7 +31,6 @@ const BookPage = () => {
           author: data.author || "Unknown",
           cover_image_url: data.cover_image_url || "",
           genre: data.genre || "Unknown",
-          publication_year: data.publication_year || "N/A",
         };
       });
       setBooks(bookList);

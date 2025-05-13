@@ -62,7 +62,7 @@ const Sidebar = () => {
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-xl shadow-xl w-[320px] text-center space-y-4">
             <h3 className="text-lg font-semibold">
-              Bạn cần đăng nhập để xem phần này. Đăng nhập ngay?
+              You need to login to view this section. Login now?
             </h3>
             <div className="flex justify-center gap-4 mt-4">
               <button
@@ -73,7 +73,7 @@ const Sidebar = () => {
                   router.push("/auth/login");
                 }}
               >
-                Đăng nhập
+                Login/Register
               </button>
               <button
                 className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
@@ -82,7 +82,7 @@ const Sidebar = () => {
                   setPendingPath("");
                 }}
               >
-                Không phải lúc này
+                Not Now
               </button>
             </div>
           </div>
