@@ -6,7 +6,8 @@ import Navbar from "@components/user/dashboard/Navbar";
 import ClubMembers from "@components/user/club/ClubMembers";
 
 export default function ClubMembersPage() {
-  const clubName = "BookNest Club"; // đặt cứng tên CLB để hiển thị UI
+  const clubName = "BookNest Club"; // Dùng để hiển thị tiêu đề
+  const clubId = "abc123"; // Đây là ID thực tế của club trong Firestore
 
   return (
     <div className="flex bg-[#E7E6E3] min-h-screen">
@@ -24,7 +25,7 @@ export default function ClubMembersPage() {
 
         {/* Nội dung chính */}
         <div className="pt-20 px-6 h-[calc(100vh-70px)] overflow-auto">
-          <ClubMembers clubName={clubName} />
+          <ClubMembers clubName={clubName} clubId={clubId} />
         </div>
       </div>
     </div>

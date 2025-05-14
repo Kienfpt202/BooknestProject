@@ -1,6 +1,5 @@
 "use client";
-
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { db } from "@lib/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { useAuth } from "@context/usercontext";
@@ -9,23 +8,21 @@ import Sidebar from "@components/user/dashboard/Sidebar";
 import Navbar from "@components/user/dashboard/Navbar";
 import ClubSection from "@components/user/club/ClubSection";
 import Pagination from "@components/admin/Pagination";
+import ClubCard from "@components/user/club/ClubCard";
 
 const itemsPerPage = 4;
 
 const ClubPage = () => {
   const { currentUser } = useAuth();
-
   const [availableClubs, setAvailableClubs] = useState([]);
   const [joinedClubs, setJoinedClubs] = useState([]);
   const [myClubs, setMyClubs] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Phân trang cho từng loại club
   const [availablePage, setAvailablePage] = useState(1);
   const [joinedPage, setJoinedPage] = useState(1);
   const [myPage, setMyPage] = useState(1);
 
-  // Helper function chia trang
   const paginate = (list, page) => {
     const start = (page - 1) * itemsPerPage;
     const end = start + itemsPerPage;
@@ -77,7 +74,8 @@ const ClubPage = () => {
         setJoinedClubs((prevJoined) => {
           const exists = prevJoined.some((c) => c.clubId === clubId);
           if (!exists) {
-            return [...prevJoined, { ...club, status: "enrolled" }];
+            const status = club.is_private ? "not-confirmed" : "enrolled";
+            return [...prevJoined, { ...club, status }];
           }
           return prevJoined;
         });
@@ -104,7 +102,12 @@ const ClubPage = () => {
     });
   };
 
-  // Dữ liệu đã phân trang
+  const handleDeleteClub = (clubId) => {
+    setMyClubs((prev) => prev.filter((club) => club.clubId !== clubId));
+    setAvailableClubs((prev) => prev.filter((club) => club.clubId !== clubId));
+    setJoinedClubs((prev) => prev.filter((club) => club.clubId !== clubId));
+  };
+
   const paginatedAvailable = paginate(availableClubs, availablePage);
   const paginatedJoined = paginate(joinedClubs, joinedPage);
   const paginatedMy = paginate(myClubs, myPage);
@@ -143,6 +146,7 @@ const ClubPage = () => {
                 title="Joined clubs"
                 clubs={paginatedJoined}
                 onExit={handleExitClub}
+                onUndoJoinRequest={handleExitClub}
               />
               <Pagination
                 totalItems={joinedClubs.length}

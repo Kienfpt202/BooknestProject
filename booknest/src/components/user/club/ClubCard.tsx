@@ -1,17 +1,19 @@
-import React, { useState } from 'react';
-import toast from 'react-hot-toast';
-import Link from 'next/link';
-import { Pencil, Trash2, Users, Undo2, LogOut } from 'lucide-react';
+import React, { useState } from "react";
+import toast from "react-hot-toast";
+import Link from "next/link";
+import { Pencil, Trash2, Users, Undo2, LogOut } from "lucide-react";
 
 interface ClubCardProps {
   clubId?: string;
   name: string;
   owner: string;
   description: string;
-  status?: 'enrolled' | 'not-confirmed';
+  status?: "enrolled" | "not-confirmed";
   isMyClub?: boolean;
   onJoin?: (clubId: string) => void;
   onExit?: (clubId: string) => void;
+  onUndo?: (clubId: string) => void;
+  onDelete?: (clubId: string) => void;  // Thêm prop onDelete
 }
 
 const ClubCard: React.FC<ClubCardProps> = ({
@@ -22,9 +24,11 @@ const ClubCard: React.FC<ClubCardProps> = ({
   isMyClub,
   onJoin,
   onExit,
+  onUndo,
+  onDelete,  // Nhận hàm onDelete
 }) => {
-  const [isJoined, setIsJoined] = useState(status === 'enrolled');
-  const [isPending, setIsPending] = useState(status === 'not-confirmed');
+  const [isJoined, setIsJoined] = useState(status === "enrolled");
+  const [isPending] = useState(status === "not-confirmed");
 
   const handleJoin = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -35,8 +39,12 @@ const ClubCard: React.FC<ClubCardProps> = ({
 
   const handleUndo = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setIsPending(false);
-    toast.success('Your join request has been undone!');
+    if (clubId && onUndo) {
+      onUndo(clubId);
+      toast.success("Undo successful!");
+    } else {
+      console.warn("Undo failed: clubId or onUndo missing");
+    }
   };
 
   const handleExit = (e: React.MouseEvent) => {
@@ -45,6 +53,14 @@ const ClubCard: React.FC<ClubCardProps> = ({
       onExit(clubId);
       setIsJoined(false);
       toast.success(`You have exited the club "${name}".`);
+    }
+  };
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (confirm(`Are you sure you want to delete the club "${name}"?`) && onDelete && clubId) {
+      onDelete(clubId);
+      toast.success(`Club "${name}" deleted successfully.`);
     }
   };
 
@@ -119,10 +135,7 @@ const ClubCard: React.FC<ClubCardProps> = ({
             </button>
           </Link>
           <button
-            onClick={(e) => {
-              e.stopPropagation();
-              toast.error('Delete functionality not implemented');
-            }}
+            onClick={handleDelete}  // Gọi hàm xóa khi nhấn nút delete
             className="flex items-center gap-1 border border-[#8B5A2B] text-[#8B5A2B] px-2 py-1 rounded-md text-sm hover:bg-red-600 hover:text-white transition"
           >
             <Trash2 size={14} />

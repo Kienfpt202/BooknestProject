@@ -1,50 +1,45 @@
 "use client";
+
+import { useEffect, useState } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@lib/firebase";
+
 import Sidebar from "@components/user/dashboard/Sidebar";
 import Navbar from "@components/user/dashboard/Navbar";
 import BookList from "@components/user/book/BookList";
 
-const booksData = [
-  {
-    title: "The Great Gatsby",
-    author: "F. Scott Fitzgerald",
-    cover: "/images/the_great_gastby.jpg",
-    views: 1200,
-    date: "12 Mar 2025",
-  },
-  {
-    title: "To Kill a Mockingbird",
-    author: "Harper Lee",
-    cover: "/images/to_kill a_mockingbird.jpg",
-    views: 980,
-    date: "08 Mar 2025",
-  },
-  {
-    title: "1984",
-    author: "George Orwell",
-    cover: "/images/1984.jpg",
-    views: 1500,
-    date: "01 Mar 2025",
-  },
-];
+const BookPage = () => {
+  const [books, setBooks] = useState([]);
 
-const Dashboard = () => {
+  useEffect(() => {
+    const fetchBooks = async () => {
+      const booksCollection = collection(db, "books");
+      const querySnapshot = await getDocs(booksCollection);
+      const booksData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setBooks(booksData);
+    };
+
+    fetchBooks();
+  }, []);
+
   return (
-    <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
-      <Sidebar />
+    <div className="flex h-screen bg-[#fefaf2] font-sans text-[#5a3b2e]">
+      <div className="w-64 bg-[#f8f1e7] border-r border-[#d2bfa3] fixed left-0 top-0 h-screen z-50">
+        <Sidebar />
+      </div>
 
-      {/* Main Content */}
       <div className="flex-1 flex flex-col ml-64">
-        {/* Navbar */}
-        <Navbar />
+        <div className="h-[70px] bg-[#fefaf2] border-b border-[#e0c197] shadow-sm flex items-center px-6 z-50">
+          <Navbar />
+        </div>
 
-        <main className="p-8 overflow-y-auto">
-          <h1 className="text-2xl font-bold text-[#8B5E3B] mb-6">
-            Welcome to BookNest Community!
-          </h1>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <BookList title="Latest Books" books={booksData} />
-            <BookList title="Popular Books" books={booksData} />
+        <main className="flex-1 overflow-y-auto p-8">
+          <div className="w-full md:w-3/4">
+            <h2 className="text-xl font-semibold mb-4 text-[#8B5E3B]">All Books</h2>
+            <BookList books={books} />
           </div>
         </main>
       </div>
@@ -52,4 +47,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default BookPage;

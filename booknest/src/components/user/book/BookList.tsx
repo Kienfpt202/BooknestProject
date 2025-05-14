@@ -9,9 +9,13 @@ interface BookListProps {
     bookId: string;
     title: string;
     author: string;
-    cover?: string;
+    cover: string;
     views: number;
     date: string;
+    description: string;
+    genre: string;
+    pageCount: number;
+    publisher: string;
   }[];
 }
 
@@ -54,7 +58,7 @@ const BookList = ({ title, books }: BookListProps) => {
       {/* Hiển thị danh sách sách */}
       <div className="flex gap-6 overflow-x-auto scrollbar-hide">
         {filteredBooks.map((book, index) => (
-          <BookCard key={index} {...book} />
+          <BookCard id={""} coverImage={""} key={index} {...book} />
         ))}
       </div>
     </section>

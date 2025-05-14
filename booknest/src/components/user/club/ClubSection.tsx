@@ -7,11 +7,12 @@ interface ClubSectionProps {
   clubs: { clubId: string; name: string; owner: string; description: string; status?: 'enrolled' | 'not-confirmed' }[];
   isMyClub?: boolean;
   showCreateButton?: boolean;
-  onJoin?: (clubId: string) => void; // Add onJoin prop
-  onExit?: (clubId: string) => void; // Add onExit prop
+  onJoin?: (clubId: string) => void; 
+  onExit?: (clubId: string) => void; 
+  onUndo?: (clubId: string) => void;
 }
 
-const ClubSection: React.FC<ClubSectionProps> = ({ title, clubs, isMyClub, showCreateButton, onJoin, onExit }) => {
+const ClubSection: React.FC<ClubSectionProps> = ({ title, clubs, isMyClub, showCreateButton, onJoin, onExit, onUndo }) => {
   return (
     <div className="mb-10">
       <div className="bg-[#F5E9D6] p-4 rounded-t-lg flex justify-between items-center">
@@ -37,6 +38,7 @@ const ClubSection: React.FC<ClubSectionProps> = ({ title, clubs, isMyClub, showC
             isMyClub={isMyClub}
             onJoin={onJoin} // Pass the onJoin function
             onExit={onExit} // Pass the onExit function
+            onUndo={onUndo}
           />
         ))}
       </div>

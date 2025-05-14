@@ -1,45 +1,50 @@
+"use client";
+
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { FaEye, FaCalendarAlt } from "react-icons/fa";
 
 interface BookCardProps {
+  id: string;
   title: string;
   author: string;
-  cover?: string;
+  coverImage: string;
   views: number;
   date: string;
+  description: string;
+  genre: string;
+  pageCount: number;
+  publisher: string;
 }
 
-const BookCard = ({ title, author, cover, views, date }: BookCardProps) => {
+const BookCard: React.FC<BookCardProps> = ({
+  id,
+  title,
+  author,
+  coverImage,
+  description,
+  genre,
+  pageCount,
+}) => {
   return (
-    <Link href="/user/book/detail" passHref>
-      <div className="w-56 bg-[#F5ECE3] rounded-lg shadow-md overflow-hidden transition hover:shadow-lg hover:scale-105 cursor-pointer">
-
-        <div className="h-40 bg-gray-200 flex items-center justify-center relative">
-          {cover ? (
-            <Image
-              src={cover}
-              alt={title}
-              layout="fill"
-              objectFit="cover"
-              className="rounded-t-lg"
-            />
-          ) : (
-            <span className="text-gray-500">No Image</span>
-          )}
+    <Link href={`/user/book/detail/${id}`} passHref>
+      <div className="flex bg-[#fdf6ec] border border-[#e6ccb2] rounded-xl shadow hover:shadow-lg transition duration-300 cursor-pointer overflow-hidden">
+        <div className="w-24 h-32 relative">
+          <Image
+            src={coverImage}
+            alt={title}
+            layout="fill"
+            objectFit="cover"
+            className="rounded-l-xl"
+          />
         </div>
-
-        <div className="p-3 text-[#8B5E3B]">
-          <h3 className="text-lg font-semibold truncate">{title}</h3>
-          <p className="text-sm text-[#6A3E1E]">{author}</p>
-
-          <div className="flex justify-between items-center text-sm mt-2">
-            <span className="flex items-center gap-1">
-              <FaEye /> {views}
-            </span>
-            <span className="flex items-center gap-1">
-              <FaCalendarAlt /> {date}
-            </span>
+        <div className="flex-1 px-4 py-2">
+          <h3 className="text-lg font-semibold text-[#5a3b2e]">{title}</h3>
+          <p className="text-sm text-[#7a5c3e]">by {author}</p>
+          <p className="text-xs text-[#a1886f] mt-1 line-clamp-2">{description}</p>
+          <div className="text-xs text-[#b89b7c] mt-2 flex justify-between">
+            <span>{genre}</span>
+            <span>{pageCount} pages</span>
           </div>
         </div>
       </div>
